@@ -1,0 +1,11 @@
+# Composer files
+/vendor/
+
+# Config
+.env
+
+# PHPUnit
+.phpunit.result.cache
+
+# PHPStorm
+/.idea/

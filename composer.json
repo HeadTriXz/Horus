@@ -1,0 +1,7 @@
+{
+  "name": "headtrixz/horus",
+  "description": "A web-based exam tracking system",
+  "require-dev": {
+    "phpunit/phpunit": "10.0.12"
+  }
+}
