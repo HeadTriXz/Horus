@@ -1,8 +1,8 @@
 <?php
 
-namespace Horus\Core\Http;
+namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Interfaces\UriInterface;
+use Horus\Core\Http\Message\Interfaces\UriInterface;
 use InvalidArgumentException;
 
 /**

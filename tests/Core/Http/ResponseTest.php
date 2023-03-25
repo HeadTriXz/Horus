@@ -1,6 +1,6 @@
 <?php
 
-use Horus\Core\Http\Response;
+use Horus\Core\Http\Message\Response;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase

@@ -1,10 +1,10 @@
 <?php
 
-namespace Horus\Core\Http;
+namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Interfaces\ServerRequestInterface;
-use Horus\Core\Http\Interfaces\StreamInterface;
-use Horus\Core\Http\Interfaces\UriInterface;
+use Horus\Core\Http\Message\Interfaces\ServerRequestInterface;
+use Horus\Core\Http\Message\Interfaces\StreamInterface;
+use Horus\Core\Http\Message\Interfaces\UriInterface;
 
 /**
  * Represents an incoming, server-side HTTP request.

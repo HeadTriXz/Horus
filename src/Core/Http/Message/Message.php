@@ -1,9 +1,9 @@
 <?php
 
-namespace Horus\Core\Http;
+namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Interfaces\MessageInterface;
-use Horus\Core\Http\Interfaces\StreamInterface;
+use Horus\Core\Http\Message\Interfaces\MessageInterface;
+use Horus\Core\Http\Message\Interfaces\StreamInterface;
 use InvalidArgumentException;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-use Horus\Core\Http\Message;
+use Horus\Core\Http\Message\Message;
 use PHPUnit\Framework\TestCase;
 
 class BasicMessage extends Message

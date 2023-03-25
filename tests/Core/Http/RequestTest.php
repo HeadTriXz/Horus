@@ -1,9 +1,9 @@
 <?php
 
-use Horus\Core\Http\Interfaces\RequestInterface;
-use Horus\Core\Http\Request;
-use Horus\Core\Http\Stream;
-use Horus\Core\Http\Uri;
+use Horus\Core\Http\Message\Interfaces\RequestInterface;
+use Horus\Core\Http\Message\Request;
+use Horus\Core\Http\Message\Stream;
+use Horus\Core\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase

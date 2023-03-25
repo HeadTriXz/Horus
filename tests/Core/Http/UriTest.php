@@ -1,6 +1,6 @@
 <?php
 
-use Horus\Core\Http\Uri;
+use Horus\Core\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
 
 class UriTest extends TestCase

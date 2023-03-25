@@ -1,6 +1,6 @@
 <?php
 
-use Horus\Core\Http\Stream;
+use Horus\Core\Http\Message\Stream;
 use PHPUnit\Framework\TestCase;
 
 class StreamTest extends TestCase

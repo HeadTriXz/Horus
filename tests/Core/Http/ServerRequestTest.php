@@ -1,7 +1,7 @@
 <?php
 
-use Horus\Core\Http\ServerRequest;
-use Horus\Core\Http\Uri;
+use Horus\Core\Http\Message\ServerRequest;
+use Horus\Core\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
 
 class ServerRequestTest extends TestCase
