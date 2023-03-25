@@ -11,10 +11,10 @@ use Horus\Core\Http\Interfaces\UriInterface;
  */
 class ServerRequest extends Request implements ServerRequestInterface
 {
-    protected array $attributes = [];
-    protected array $cookieParams = [];
-    protected object | array | null $parsedBody = null;
-    protected array $queryParams = [];
+    protected array $attributes;
+    protected array $cookieParams;
+    protected object | array | null $parsedBody;
+    protected array $queryParams;
     protected array $serverParams;
 
     /**
@@ -26,10 +26,18 @@ class ServerRequest extends Request implements ServerRequestInterface
         array $headers = [],
         StreamInterface $body = null,
         string $protocol = "1.1",
-        array $serverParams = []
+        array $serverParams = [],
+        array $cookieParams = [],
+        array $queryParams = [],
+        array $attributes = [],
+        array | object $parsedBody = null
     ) {
         parent::__construct($method, $uri, $headers, $body, $protocol);
         $this->serverParams = $serverParams;
+        $this->cookieParams = $cookieParams;
+        $this->queryParams = $queryParams;
+        $this->attributes = $attributes;
+        $this->parsedBody = $parsedBody;
     }
 
     /**
