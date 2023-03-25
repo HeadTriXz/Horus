@@ -8,6 +8,7 @@ use Horus\Core\Database\Traits\LimitClause;
 use Horus\Core\Database\Traits\OrderByClause;
 use Horus\Core\Database\Traits\WhereClause;
 use InvalidArgumentException;
+use stdClass;
 
 /**
  * Builds a SELECT query to retrieve rows from the database.
@@ -99,9 +100,9 @@ class SelectQueryBuilder
     /**
      * Executes the query and returns the first row as an object.
      *
-     * @return ?Model An object representing the first row returned by the query, or null if there are no rows.
+     * @return stdClass | Model | null An object representing the first row returned by the query, or null if there are no rows.
      */
-    public function getOne(): ?Model
+    public function getOne(): stdClass | Model | null
     {
         if (!isset($this->database)) {
             throw new InvalidArgumentException("Database is required, but not provided.");

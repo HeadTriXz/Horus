@@ -3,6 +3,7 @@
 namespace Horus\Core\Database;
 
 use PDO;
+use stdClass;
 
 /**
  * The Database class provides an interface to interact with the database using PDO.
@@ -84,9 +85,9 @@ class Database
      * @param array $params The parameters to bind to the query.
      * @param ?string $model The name of the class to use for the returned object.
      *
-     * @return ?Model Returns an object of the specified class or null if no rows are returned.
+     * @return stdClass | Model | null Returns an object of the specified class or null if no rows are returned.
      */
-    public function queryOne(string $query, array $params = [], string $model = null): ?Model
+    public function queryOne(string $query, array $params = [], string $model = null): stdClass | Model | null
     {
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
