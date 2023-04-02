@@ -1,7 +1,7 @@
 <?php
 
-use Horus\Core\Http\Message\Interfaces\RequestInterface;
 use Horus\Core\Http\Message\Request;
+use Horus\Core\Http\Message\RequestInterface;
 use Horus\Core\Http\Message\Stream;
 use Horus\Core\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;

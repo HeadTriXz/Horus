@@ -1,6 +1,6 @@
 <?php
 
-namespace Horus\Core\Http\Message\Interfaces;
+namespace Horus\Core\Http\Message;
 
 use RuntimeException;
 

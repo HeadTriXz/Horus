@@ -2,7 +2,6 @@
 
 namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Message\Interfaces\UriInterface;
 use InvalidArgumentException;
 
 /**
@@ -74,6 +73,23 @@ class Uri implements UriInterface
         if ($this->port === static::STANDARD_PORTS[$this->scheme]) {
             $this->port = null;
         }
+    }
+
+    /**
+     * Returns a new instance using super globals.
+     *
+     * @return static
+     */
+    public static function fromGlobals(): static
+    {
+        $protocol = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off")
+            || $_SERVER["SERVER_PORT"] === 443 ? "https" : "http";
+        $host = $_SERVER["HTTP_HOST"] ?? $_SERVER["SERVER_NAME"];
+        $port = $_SERVER["SERVER_PORT"];
+        $path = $_SERVER["REQUEST_URI"];
+        $query = $_SERVER["QUERY_STRING"] ?? "";
+
+        return new Uri(sprintf('%s://%s:%d%s%s', $protocol, $host, $port, $path, $query));
     }
 
     /**

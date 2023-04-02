@@ -2,7 +2,6 @@
 
 namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Message\Interfaces\StreamInterface;
 use InvalidArgumentException;
 use RuntimeException;
 

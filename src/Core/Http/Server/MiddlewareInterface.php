@@ -1,9 +1,9 @@
 <?php
 
-namespace Horus\Core\Http\Server\Interfaces;
+namespace Horus\Core\Http\Server;
 
-use Horus\Core\Http\Message\Interfaces\ResponseInterface;
-use Horus\Core\Http\Message\Interfaces\ServerRequestInterface;
+use Horus\Core\Http\Message\ResponseInterface;
+use Horus\Core\Http\Message\ServerRequestInterface;
 
 /**
  * Participant in processing a server request and response.

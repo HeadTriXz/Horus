@@ -2,9 +2,6 @@
 
 namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Message\Interfaces\RequestInterface;
-use Horus\Core\Http\Message\Interfaces\StreamInterface;
-use Horus\Core\Http\Message\Interfaces\UriInterface;
 use InvalidArgumentException;
 
 /**

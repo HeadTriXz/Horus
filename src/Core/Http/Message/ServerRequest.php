@@ -2,21 +2,11 @@
 
 namespace Horus\Core\Http\Message;
 
-use Horus\Core\Http\Message\Interfaces\ServerRequestInterface;
-use Horus\Core\Http\Message\Interfaces\StreamInterface;
-use Horus\Core\Http\Message\Interfaces\UriInterface;
-
 /**
  * Represents an incoming, server-side HTTP request.
  */
 class ServerRequest extends Request implements ServerRequestInterface
 {
-    protected array $attributes;
-    protected array $cookieParams;
-    protected object | array | null $parsedBody;
-    protected array $queryParams;
-    protected array $serverParams;
-
     /**
      * Represents an incoming, server-side HTTP request.
      */
@@ -26,18 +16,33 @@ class ServerRequest extends Request implements ServerRequestInterface
         array $headers = [],
         StreamInterface $body = null,
         string $protocol = "1.1",
-        array $serverParams = [],
-        array $cookieParams = [],
-        array $queryParams = [],
-        array $attributes = [],
-        array | object $parsedBody = null
+        protected array $serverParams = [],
+        protected array $cookieParams = [],
+        protected array $queryParams = [],
+        protected array $attributes = [],
+        protected array | object | null $parsedBody = null
     ) {
         parent::__construct($method, $uri, $headers, $body, $protocol);
-        $this->serverParams = $serverParams;
-        $this->cookieParams = $cookieParams;
-        $this->queryParams = $queryParams;
-        $this->attributes = $attributes;
-        $this->parsedBody = $parsedBody;
+    }
+
+    /**
+     * Returns a new instance using super globals.
+     *
+     * @return static
+     */
+    public static function fromGlobals(): static
+    {
+        return new static(
+            method: $_SERVER["REQUEST_METHOD"] ?? "GET",
+            uri: Uri::fromGlobals(),
+            headers: getallheaders() ?? [],
+            body: new Stream(fopen("php://input", "r+")),
+            protocol: $_SERVER["SERVER_PROTOCOL"] ?? "1.1",
+            serverParams: $_SERVER,
+            cookieParams: $_COOKIE ?? [],
+            queryParams: $_GET ?? [],
+            parsedBody: $_POST ?? null
+        );
     }
 
     /**
