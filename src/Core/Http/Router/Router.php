@@ -114,9 +114,10 @@ class Router implements RouterInterface, RequestHandlerInterface
 
                 $handler = new RouterHandler($route, $this->container);
                 foreach ($route->getMiddleware() as $middleware) {
+                    $chunks = explode($middleware, ":");
                     $handler = $this->container
-                        ->get($middleware)
-                        ->process($request, $handler);
+                        ->get(array_shift($chunks))
+                        ->process($request, $handler, ...$chunks);
                 }
 
                 return $handler->handle($request);
