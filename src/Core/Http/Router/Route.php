@@ -3,7 +3,6 @@
 namespace Horus\Core\Http\Router;
 
 use Horus\Core\Http\Message\ServerRequestInterface;
-use Horus\Core\Http\Server\MiddlewareInterface;
 
 /**
  * Represents an HTTP route.
@@ -13,6 +12,7 @@ class Route implements RouteInterface
     protected string $controller;
     protected string $controllerMethod;
     protected array $middleware = [];
+    protected ?string $name = null;
 
     /**
      * Represents an HTTP route.
@@ -70,6 +70,16 @@ class Route implements RouteInterface
     }
 
     /**
+     * Get the name of this route.
+     *
+     * @return ?string The name of the route
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
      * Get the path for this route.
      *
      * @return string The path of the route.
@@ -106,6 +116,18 @@ class Route implements RouteInterface
     public function middleware(string ...$middleware): static
     {
         $this->middleware = array_merge($this->middleware, $middleware);
+        return $this;
+    }
+
+    /**
+     * Set the name of the route.
+     *
+     * @param string $name The name of the route, must be unique.
+     * @return $this
+     */
+    public function name(string $name): static
+    {
+        $this->name = $name;
         return $this;
     }
 }

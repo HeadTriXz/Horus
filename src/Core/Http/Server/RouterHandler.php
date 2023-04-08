@@ -7,26 +7,37 @@ use Horus\Core\Container\ContainerInterface;
 use Horus\Core\Http\Message\Response;
 use Horus\Core\Http\Message\ResponseInterface;
 use Horus\Core\Http\Message\ServerRequestInterface;
-use Horus\Core\Http\Message\Stream;
 use Horus\Core\Http\Router\Route;
 
 class RouterHandler implements RequestHandlerInterface
 {
+    protected array $stack;
+
     public function __construct(
         protected Route $route,
         protected ContainerInterface $container
-    ) {}
+    ) {
+        $this->stack = $this->route->getMiddleware();
+    }
 
     /**
      * @throws ContainerException Error while retrieving the entry.
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $middleware = array_shift($this->stack);
+        if ($middleware !== null) {
+            $chunks = explode(":", $middleware);
+            return $this->container
+                ->get(array_shift($chunks))
+                ->process($request, $this, ...$chunks);
+        }
+
         $controller = $this->container->get($this->route->getController());
         $content = call_user_func([$controller, $this->route->getControllerMethod()], $request);
 
         if (is_string($content)) {
-            return new Response(200, body: new Stream($content));
+            return new Response(200, body: $content);
         }
 
         if ($content instanceof ResponseInterface) {

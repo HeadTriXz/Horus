@@ -30,4 +30,13 @@ interface ContainerInterface
      * @return bool
      */
     public function has(string $id): bool;
+
+    /**
+     * Adds an instance to the container.
+     *
+     * @param string $id Identifier of the entry.
+     * @param mixed $instance The instance to add.
+     * @return void
+     */
+    public function set(string $id, mixed $instance): void;
 }

@@ -33,6 +33,14 @@ interface RouterInterface
     public function get(string $path, array $controller): RouteInterface;
 
     /**
+     * Get a route by its name.
+     *
+     * @param string $name The name of the route.
+     * @return ?RouteInterface The found route.
+     */
+    public function getRoute(string $name): ?RouteInterface;
+
+    /**
      * Get all registered routes.
      *
      * @return RouteInterface[] An array of routes.

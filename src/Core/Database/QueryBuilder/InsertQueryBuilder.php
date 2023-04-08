@@ -15,6 +15,7 @@ class InsertQueryBuilder
     protected array $params = [];
     protected array $update = [];
     protected string $tableName;
+    protected int $rowCount = 0;
 
     /**
      * Builds INSERT query to insert rows into the database.
@@ -36,11 +37,8 @@ class InsertQueryBuilder
             throw new InvalidArgumentException("Database is required, but not provided.");
         }
 
-        $tempParams = $this->params;
-        $tempParams[] = array_values($this->update);
-        $flatParams = array_merge(...$tempParams);
-
-        return $this->database->execute($this->getQuery(), $flatParams);
+        $params = array_merge($this->params, array_values($this->update));
+        return $this->database->execute($this->getQuery(), $params);
     }
 
     /**
@@ -56,7 +54,7 @@ class InsertQueryBuilder
         }
 
         $columns = implode(", ", $this->columns);
-        $values = implode(", ", array_fill(0, count($this->params),
+        $values = implode(", ", array_fill(0, $this->rowCount,
             "(" . implode(", ", array_fill(0, count($this->columns), "?")) . ")"
         ));
 
@@ -133,7 +131,8 @@ class InsertQueryBuilder
             }
 
             $this->columns = array_keys($values);
-            $this->params[] = array_values($values);
+            $this->params = array_merge($this->params, array_values($values));
+            $this->rowCount++;
         }
 
         return $this;

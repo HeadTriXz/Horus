@@ -89,6 +89,23 @@ class Router implements RouterInterface, RequestHandlerInterface
     }
 
     /**
+     * Get a route by its name.
+     *
+     * @param string $name The name of the route.
+     * @return ?RouteInterface The found route.
+     */
+    public function getRoute(string $name): ?RouteInterface
+    {
+        foreach ($this->routes as $route) {
+            if ($route->getName() === $name) {
+                return $route;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get all registered routes.
      *
      * @return RouteInterface[] An array of routes.
@@ -107,22 +124,19 @@ class Router implements RouterInterface, RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         try {
-            foreach ($this->getRoutes() as $route) {
+            foreach ($this->routes as $route) {
                 if (!$route->match($request)) {
                     continue;
                 }
 
                 $handler = new RouterHandler($route, $this->container);
-                foreach ($route->getMiddleware() as $middleware) {
-                    $chunks = explode($middleware, ":");
-                    $handler = $this->container
-                        ->get(array_shift($chunks))
-                        ->process($request, $handler, ...$chunks);
-                }
-
                 return $handler->handle($request);
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            if (getenv("DEBUG_ENABLED") === "true") {
+                throw $exception;
+            }
+
             return new Response(500, "Internal Server Error");
         }
 
@@ -147,7 +161,7 @@ class Router implements RouterInterface, RequestHandlerInterface
         $oldMiddleware = $this->middleware;
 
         $this->middleware = array_merge($this->middleware, $middleware);
-        call_user_func($callback);
+        call_user_func($callback, $this);
         $this->middleware = $oldMiddleware;
 
         return $this;

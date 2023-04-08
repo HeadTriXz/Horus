@@ -1,11 +1,7 @@
-# Composer files
-/vendor/
-
-# Config
+/node_modules
+/vendor
 .env
-
-# PHPUnit
+.env.backup
+.env.production
 .phpunit.result.cache
-
-# PHPStorm
-/.idea/
+/.idea

@@ -3,10 +3,12 @@
 namespace Horus\Core;
 
 use Closure;
-use Horus\Core\Container\Container;
 use Horus\Core\Container\ContainerInterface;
+use Horus\Core\Database\Database;
+use Horus\Core\Database\DatabaseInterface;
 use Horus\Core\Http\Message\ResponseInterface;
 use Horus\Core\Http\Message\ServerRequest;
+use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\Http\Message\Stream;
 use Horus\Core\Http\Router\RouterInterface;
 
@@ -16,6 +18,7 @@ class Application
 
     protected ContainerInterface $container;
     protected RouterInterface $router;
+    protected Closure $exceptionCallback;
     protected Closure $notFoundCallback;
 
     private function __construct()
@@ -25,6 +28,11 @@ class Application
     public function getContainer(): ContainerInterface
     {
         return $this->container;
+    }
+
+    public function getDatabase(): DatabaseInterface
+    {
+        return $this->container->get(Database::class);
     }
 
     public static function getInstance(): static
@@ -41,6 +49,11 @@ class Application
         return $this->router;
     }
 
+    public function handleException(callable $callback): void
+    {
+        $this->exceptionCallback = $callback;
+    }
+
     public function handleNotFound(callable $callback): void
     {
         $this->notFoundCallback = $callback;
@@ -49,8 +62,9 @@ class Application
     public function run(): void
     {
         $request = ServerRequest::fromGlobals();
-        $response = $this->router->handle($request);
+        $this->container->set(ServerRequestInterface::class, $request);
 
+        $response = $this->router->handle($request);
         if (!headers_sent()) {
             header(
                 "HTTP/{$response->getProtocolVersion()} {$response->getStatusCode()} {$response->getReasonPhrase()}",
@@ -65,6 +79,19 @@ class Application
             }
         }
 
+        // Handle Internal Server Errors.
+        if ($response->getStatusCode() === 500 && isset($this->exceptionCallback)) {
+            $content = call_user_func($this->exceptionCallback, $response);
+            if (is_string($content)) {
+                $response = $response->withBody(new Stream($content));
+            }
+
+            if ($content instanceof ResponseInterface) {
+                $response = $content;
+            }
+        }
+
+        // Handle Not Found responses.
         if ($response->getStatusCode() === 404 && isset($this->notFoundCallback)) {
             $content = call_user_func($this->notFoundCallback, $response);
             if (is_string($content)) {

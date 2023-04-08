@@ -2,6 +2,7 @@
 
 namespace Horus\Core\Database;
 
+use Horus\Core\Application;
 use Horus\Core\Database\QueryBuilder\QueryBuilder;
 use LogicException;
 
@@ -33,6 +34,9 @@ abstract class Model
      */
     public static function createQueryBuilder(): QueryBuilder
     {
+        self::$database ??= Application::getInstance()
+            ->getDatabase();
+
         return new QueryBuilder(self::$database, static::class);
     }
 
@@ -58,9 +62,9 @@ abstract class Model
      * Finds and returns a single row from the model's table with the specified ID.
      *
      * @param string $id The ID of the row to find.
-     * @return static The row matching the specified ID.
+     * @return ?static The row matching the specified ID.
      */
-    public static function findById(string $id): static
+    public static function findById(string $id): ?static
     {
         return static::createQueryBuilder()
             ->select()
@@ -72,9 +76,9 @@ abstract class Model
      * Finds and returns a single row from the model's table that matches the specified conditions.
      *
      * @param array $where The conditions to match against.
-     * @return static The model instance matching the specified conditions.
+     * @return ?static The model instance matching the specified conditions.
      */
-    public static function findOne(array $where): static
+    public static function findOne(array $where): ?static
     {
         $qb = static::createQueryBuilder()
             ->select();

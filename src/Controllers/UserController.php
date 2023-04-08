@@ -2,15 +2,16 @@
 
 namespace Horus\Controllers;
 
+use Horus\Auth;
 use Horus\Core\Controller\BaseController;
 use Horus\Core\View\View;
 
 class UserController extends BaseController
 {
-    public function index(): string
+    public function profile(): string
     {
-        return View::render("home.php", [
-            "user" => "Peter"
-        ]); // Random page.
+        return View::render("Profiles/index.php", [
+            "user" => Auth::user()->first_name
+        ]);
     }
 }

@@ -9,17 +9,14 @@ use InvalidArgumentException;
  */
 class Response extends Message implements ResponseInterface
 {
-    protected int $statusCode;
-    protected string $statusText = "";
-
     /**
      * Represents an outgoing, server-side response.
      */
     public function __construct(
-        int $statusCode = 200,
-        string $statusText = "",
+        protected int $statusCode = 200,
+        protected string $statusText = "",
         array $headers = [],
-        StreamInterface $body = null,
+        string | StreamInterface $body = null,
         string $protocol = "1.1"
     ) {
         if ($statusCode < 100 || $statusCode > 599) {
@@ -27,9 +24,10 @@ class Response extends Message implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        $this->statusCode = $statusCode;
-        $this->statusText = $statusText;
-        $this->body = $body;
+        $this->body = is_string($body)
+            ? new Stream($body)
+            : $body;
+
         $this->protocol = $protocol;
     }
 

@@ -39,7 +39,7 @@ class DeleteQueryBuilder
             throw new InvalidArgumentException("Database is required, but not provided.");
         }
 
-        return $this->database->execute($this->getQuery(), array_merge(...$this->params));
+        return $this->database->execute($this->getQuery(), $this->params);
     }
 
     /**

@@ -8,7 +8,7 @@ use stdClass;
 /**
  * The Database class provides an interface to interact with the database using PDO.
  */
-class Database
+class Database implements DatabaseInterface
 {
     private PDO $connection;
 
@@ -75,7 +75,7 @@ class Database
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_CLASS, $model);
+        return $stmt->fetchAll(PDO::FETCH_CLASS, $model) ?: [];
     }
 
     /**
@@ -92,7 +92,7 @@ class Database
         $stmt = $this->connection->prepare($query);
         $stmt->execute($params);
 
-        return $stmt->fetchObject($model);
+        return $stmt->fetchObject($model) ?: null;
     }
 
     /**

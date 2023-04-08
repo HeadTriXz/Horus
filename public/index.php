@@ -20,7 +20,12 @@ $app->setRouter($router);
 
 // Custom 404 page
 $app->handleNotFound(function () {
-    return View::render("not-found.php");
+    return View::render("404.php");
+});
+
+// Custom 500 page
+$app->handleException(function () {
+    return View::render("500.php");
 });
 
 // Initialize routes
@@ -37,6 +42,16 @@ foreach (scandir($routeFolder) as $routeFile) {
 
         require_once $routeFolder . $routeFile;
     }
+}
+
+// Define global route function
+function route(string $name): ?string
+{
+    $route = Application::getInstance()
+        ->getRouter()
+        ->getRoute($name);
+
+    return $route?->getPath();
 }
 
 // Run the application

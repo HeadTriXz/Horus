@@ -22,8 +22,7 @@ class Container implements ContainerInterface
     public function get(string $id): mixed
     {
         if (!$this->has($id)) {
-            $instance = $this->resolve($id);
-            $this->instances[$id] = $instance;
+            $this->set($id, $this->resolve($id));
         }
 
         return $this->instances[$id];
@@ -33,16 +32,24 @@ class Container implements ContainerInterface
      * Returns true if the container can return an entry for the given identifier.
      * Returns false otherwise.
      *
-     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-     * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
-     *
      * @param string $id Identifier of the entry to look for.
-     *
      * @return bool
      */
     public function has(string $id): bool
     {
         return isset($this->instances[$id]);
+    }
+
+    /**
+     * Adds an instance to the container.
+     *
+     * @param string $id Identifier of the entry.
+     * @param mixed $instance The instance to add.
+     * @return void
+     */
+    public function set(string $id, mixed $instance): void
+    {
+        $this->instances[$id] = $instance;
     }
 
     /**
@@ -53,7 +60,7 @@ class Container implements ContainerInterface
      * @throws ContainerException Error while retrieving the entry.
      * @throws ReflectionException If the class or constructor does not exist.
      *
-     * @return object | null An instance of the resolved class.
+     * @return ?object An instance of the resolved class.
      */
     public function resolve(string $id): ?object
     {
