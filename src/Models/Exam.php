@@ -2,6 +2,7 @@
 
 namespace Horus\Models;
 
+use Horus\Auth;
 use Horus\Core\Database\Model;
 
 class Exam extends Model
@@ -15,6 +16,7 @@ class Exam extends Model
     public string $exam_date;
 
     protected Course $course;
+    protected ?Grade $grade;
 
     /**
      * Get the course this exam is for.
@@ -28,5 +30,17 @@ class Exam extends Model
         }
 
         return $this->course;
+    }
+
+    public function grade(): ?Grade
+    {
+        if (!isset($this->grade)) {
+            $this->grade = Grade::findOne([
+                "exam_id" => $this->id,
+                "student_id" => Auth::id()
+            ]);
+        }
+
+        return $this->grade;
     }
 }

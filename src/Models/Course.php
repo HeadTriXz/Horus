@@ -2,6 +2,7 @@
 
 namespace Horus\Models;
 
+use Horus\Auth;
 use Horus\Core\Database\Model;
 
 class Course extends Model
@@ -14,6 +15,7 @@ class Course extends Model
     public string $name;
 
     protected array $exams;
+    protected ?float $avgGrade;
     protected User $teacher;
 
     /**
@@ -24,12 +26,36 @@ class Course extends Model
     public function exams(): array
     {
         if (!isset($this->exams)) {
-            $this->exams = Exam::find([
-                "course_id" => $this->id
-            ]);
+            $this->exams = Exam::createQueryBuilder()
+                ->select()
+                ->where("course_id = ?", $this->id)
+                ->orderBy("exam_date", "DESC")
+                ->getAll();
         }
 
         return $this->exams;
+    }
+
+    /**
+     * Get the average grade of the logged-in user for this course.
+     *
+     * @return ?float The average grade of the logged-in user.
+     */
+    public function avgGrade(): ?float
+    {
+        if (!isset($this->avgGrade)) {
+            $result = Grade::createQueryBuilder()
+                ->select("ROUND(AVG(g.grade), 1)", "avg")
+                ->from("grades", "g")
+                ->innerJoin("exams", "e", "g.exam_id = e.id")
+                ->where("g.student_id = ?", Auth::id())
+                ->andWhere("e.course_id = ?", $this->id)
+                ->getOne();
+
+            $this->avgGrade = $result->avg;
+        }
+
+        return $this->avgGrade;
     }
 
     /**

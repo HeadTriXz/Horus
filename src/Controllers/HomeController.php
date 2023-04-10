@@ -20,7 +20,7 @@ class HomeController extends BaseController
             ->getAll();
 
         $exams = Exam::createQueryBuilder()
-            ->select()
+            ->select("e.*")
             ->from("exams", "e")
             ->innerJoin("user_exams", "ue", "e.id = ue.exam_id")
             ->where("e.exam_date > NOW()")

@@ -150,7 +150,7 @@ class SelectQueryBuilder
      */
     public function groupBy(string | array $group): self
     {
-        $this->groupBy = "GROUP BY" . (is_string($group)
+        $this->groupBy = "GROUP BY " . (is_string($group)
             ? $group : implode(", ", $group));
         return $this;
     }
