@@ -3,6 +3,7 @@
 namespace Horus\Models;
 
 use Horus\Core\Database\Model;
+use Horus\Enums\UserRole;
 
 class User extends Model
 {
@@ -14,6 +15,21 @@ class User extends Model
     public string $email;
     public string $password;
     public int $role;
+
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN->value;
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->role === UserRole::STUDENT->value;
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === UserRole::TEACHER->value;
+    }
 
     public function verifyPassword(string $password): bool
     {
