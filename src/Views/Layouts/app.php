@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gray-50">
         @include('Layouts/navigation.php')
 
         <main>
-            @layoutContent
+            @content
         </main>
     </div>
 </body>

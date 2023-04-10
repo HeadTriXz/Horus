@@ -207,7 +207,7 @@ class SelectQueryBuilder
             $this->joins .= "$alias ";
         }
 
-        $this->joins .= "ON $condition";
+        $this->joins .= "ON $condition ";
         return $this;
     }
 

@@ -61,10 +61,7 @@ class Application
 
     public function run(): void
     {
-        $request = ServerRequest::fromGlobals();
-        $this->container->set(ServerRequestInterface::class, $request);
-
-        $response = $this->router->handle($request);
+        $response = $this->router->handle(request());
         if (!headers_sent()) {
             header(
                 "HTTP/{$response->getProtocolVersion()} {$response->getStatusCode()} {$response->getReasonPhrase()}",

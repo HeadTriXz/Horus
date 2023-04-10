@@ -5,6 +5,8 @@ require_once dirname(__DIR__) . "/src/autoload.php";
 use Horus\Core\Application;
 use Horus\Core\Container\Container;
 use Horus\Core\DotEnv;
+use Horus\Core\Http\Message\ServerRequest;
+use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\Http\Router\Router;
 use Horus\Core\View\View;
 
@@ -45,13 +47,40 @@ foreach (scandir($routeFolder) as $routeFile) {
 }
 
 // Define global route function
-function route(string $name): ?string
+function route(string $name, array $params = []): ?string
 {
     $route = Application::getInstance()
         ->getRouter()
         ->getRoute($name);
 
-    return $route?->getPath();
+    if (!$route) {
+        return null;
+    }
+
+    $path = $route->getPath();
+    foreach ($params as $key => $value) {
+        if (str_contains($path, "\{$key}")) {
+            $path = str_replace("\{$key}", urlencode($value), $path);
+            unset($params[$key]);
+        }
+    }
+
+    if (!empty($params)) {
+        $path .= "?" . http_build_query($params);
+    }
+
+    return $path;
+}
+
+function request(): ServerRequestInterface
+{
+    static $request;
+
+    if ($request === null) {
+        $request = ServerRequest::fromGlobals();
+    }
+
+    return $request;
 }
 
 // Run the application
