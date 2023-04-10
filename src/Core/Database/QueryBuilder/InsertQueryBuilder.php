@@ -16,6 +16,7 @@ class InsertQueryBuilder
     protected array $update = [];
     protected string $tableName;
     protected int $rowCount = 0;
+    protected string $select;
 
     /**
      * Builds INSERT query to insert rows into the database.
@@ -54,11 +55,16 @@ class InsertQueryBuilder
         }
 
         $columns = implode(", ", $this->columns);
-        $values = implode(", ", array_fill(0, $this->rowCount,
-            "(" . implode(", ", array_fill(0, count($this->columns), "?")) . ")"
-        ));
+        if (isset($this->select)) {
+            $query = "INSERT INTO $this->tableName ($columns) {$this->select}";
+        } else {
+            $values = implode(", ", array_fill(0, $this->rowCount,
+                "(" . implode(", ", array_fill(0, count($this->columns), "?")) . ")"
+            ));
 
-        $query = "INSERT INTO $this->tableName ($columns) VALUES $values";
+            $query = "INSERT INTO $this->tableName ($columns) VALUES $values";
+        }
+
         if (!empty($this->update)) {
             $query .= " ON DUPLICATE KEY UPDATE " . implode(" = ?, ", array_keys($this->update)) . " = ?";
         }
@@ -70,11 +76,14 @@ class InsertQueryBuilder
      * Specifies the table to insert into.
      *
      * @param string $table The name of the table to insert into.
+     * @param string[] $columns An array of columns to insert.
      * @return $this
      */
-    public function into(string $table): self
+    public function into(string $table, array $columns = []): self
     {
         $this->tableName = $table;
+        $this->columns = $columns;
+
         return $this;
     }
 
@@ -97,6 +106,33 @@ class InsertQueryBuilder
     }
 
     /**
+     * Specifies the SELECT statement to insert.
+     *
+     * @param callable $callback A callback with a SelectQueryBuilder.
+     * @param string ...$params Optional params used in the SELECT query.
+     *
+     * @throws InvalidArgumentException if both SELECT and VALUES are provided.
+     * @return $this
+     */
+    public function select(callable $callback, string ...$params): self
+    {
+        if ($this->rowCount > 0) {
+            throw new InvalidArgumentException("Cannot use both VALUES and SELECT.");
+        }
+
+        $qb = new SelectQueryBuilder($this->database);
+        $query = call_user_func($callback, $qb);
+        if (!is_string($query)) {
+            $query = $query->getQuery();
+        }
+
+        $this->select = $query;
+        $this->params = array_merge($this->params, $params);
+
+        return $this;
+    }
+
+    /**
      * Specifies the values to insert.
      *
      * @param array $values The values to insert.
@@ -106,6 +142,10 @@ class InsertQueryBuilder
      */
     public function values(array $values): self
     {
+        if (isset($this->select)) {
+            throw new InvalidArgumentException("Cannot use both VALUES and SELECT.");
+        }
+
         if (array_is_list($values)) {
             foreach ($values as $value) {
                 if (is_array($value)) {

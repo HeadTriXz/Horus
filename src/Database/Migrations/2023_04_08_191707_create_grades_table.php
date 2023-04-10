@@ -13,7 +13,7 @@ return new class implements MigrationInterface {
     public function down(): void
     {
         $database = Application::getInstance()->getDatabase();
-        $database->execute("DROP TABLE grades;");
+        $database->execute("DROP TABLE IF EXISTS grades;");
     }
 
     /**
@@ -31,8 +31,7 @@ return new class implements MigrationInterface {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (student_id) REFERENCES users(id),
-                FOREIGN KEY (exam_id) REFERENCES exams(id),
-                FOREIGN KEY (course_id) REFERENCES courses(id)
+                FOREIGN KEY (exam_id) REFERENCES exams(id)
             );
         ");
     }

@@ -213,7 +213,7 @@ class Router implements RouterInterface, RequestHandlerInterface
         $oldPrefix = $this->prefix;
 
         $this->prefix .= $this->formatPath($path);
-        call_user_func($callback);
+        call_user_func($callback, $this);
         $this->prefix = $oldPrefix;
 
         return $this;

@@ -1,0 +1,16 @@
+INSERT INTO `database`.exams (course_id, duration, name, exam_date) VALUES
+    (1, 90, 'Tentamen Algoritmiek I', '2022-11-08 08:30:00'),
+    (2, 120, 'Tentamen OOP I', '2022-11-10 14:30:00'),
+    (3, null, 'Project/Writing for research', '2022-11-15 23:59:00'),
+    (3, 30, 'Project/CGI', '2022-12-02 12:30:00'),
+    (4, 600, 'Tentamen Algoritmiek II', '2023-02-02 08:00:00'),
+    (5, 90, 'Tentamen OOP II', '2023-02-06 14:30:00'),
+    (6, null, 'Project/Portfolio', '2023-02-06 23:59:00'),
+    (6, 30, 'Project/CGI', '2023-02-17 10:30:00'),
+    (7, null, 'Project Webtechnologie II', '2023-05-16 22:00:00'),
+    (8, null, 'Opdrachten Databases II', '2023-05-07 22:00:00'),
+    (9, null, 'Project Webapplicaties I', '2023-05-18 10:30:00'),
+    (10, null, 'Project Webtechnologie III', '2022-06-20 23:59:00'),
+    (11, 120, 'Tentamen Operating Systems', '2023-06-20 11:30:00'),
+    (12, null, 'International Communication', '2023-06-16 14:30:00'),
+    (12, null, 'Project Webapplicaties II', '2023-06-30 22:00:00');

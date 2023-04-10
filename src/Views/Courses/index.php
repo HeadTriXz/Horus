@@ -8,7 +8,7 @@
                     <li>
                         <a href="{{ route('courses', [ 'c' => $course->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                             <?php
-                                $bgColor = $course->id === $selectedCourse->id
+                                $bgColor = $course->id === $selectedCourse?->id
                                     ? "bg-black"
                                     : "bg-secondary";
                             ?>

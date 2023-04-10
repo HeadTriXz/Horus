@@ -31,6 +31,13 @@ interface DatabaseInterface
     public function execute(string $query, array $params = []): int;
 
     /**
+     * Get the ID of the last inserted row.
+     *
+     * @return ?string The ID of the last inserted row.
+     */
+    public function getLastInsertId(): ?string;
+
+    /**
      * Executes an SQL statement and returns the result set as an array of objects.
      *
      * @param string $query The SQL query to execute.

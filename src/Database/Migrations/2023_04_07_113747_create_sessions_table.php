@@ -13,7 +13,7 @@ return new class implements MigrationInterface {
     public function down(): void
     {
         $database = Application::getInstance()->getDatabase();
-        $database->execute("DROP TABLE sessions;");
+        $database->execute("DROP TABLE IF EXISTS sessions;");
     }
 
     /**

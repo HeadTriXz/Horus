@@ -62,6 +62,16 @@ class Database implements DatabaseInterface
     }
 
     /**
+     * Get the ID of the last inserted row.
+     *
+     * @return ?string The ID of the last inserted row.
+     */
+    public function getLastInsertId(): ?string
+    {
+        return $this->connection->lastInsertId();
+    }
+
+    /**
      * Executes an SQL statement and returns the result set as an array of objects.
      *
      * @param string $query The SQL query to execute.

@@ -4,6 +4,7 @@ namespace Horus\Core\Database;
 
 use Horus\Core\Application;
 use Horus\Core\Database\QueryBuilder\QueryBuilder;
+use InvalidArgumentException;
 use LogicException;
 
 /**
@@ -25,6 +26,24 @@ abstract class Model
         if (empty(static::$table)) {
             throw new LogicException(get_class($this) . " must have \$table set.");
         }
+    }
+
+    /**
+     * Insert a new entry into the model's table.
+     *
+     * @param array $data The data to insert. Must be an associative array.
+     * @return int The number of affected rows.
+     */
+    public static function create(array $data): int
+    {
+        if (array_is_list($data)) {
+            throw new InvalidArgumentException("Argument must be an associative array.");
+        }
+
+        return static::createQueryBuilder()
+            ->insert()
+            ->values($data)
+            ->execute();
     }
 
     /**
