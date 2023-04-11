@@ -15,26 +15,9 @@ class Course extends Model
     public string $name;
 
     protected array $exams;
+    protected array $studentExams;
     protected ?float $avgGrade;
     protected User $teacher;
-
-    /**
-     * Get a list of exams of the course.
-     *
-     * @return Exam[] The exams of the course.
-     */
-    public function exams(): array
-    {
-        if (!isset($this->exams)) {
-            $this->exams = Exam::createQueryBuilder()
-                ->select()
-                ->where("course_id = ?", $this->id)
-                ->orderBy("exam_date", "DESC")
-                ->getAll();
-        }
-
-        return $this->exams;
-    }
 
     /**
      * Get the average grade of the logged-in user for this course.
@@ -56,6 +39,46 @@ class Course extends Model
         }
 
         return $this->avgGrade;
+    }
+
+
+    /**
+     * Get a list of exams of the course.
+     *
+     * @return Exam[] The exams of the course.
+     */
+    public function exams(): array
+    {
+        if (!isset($this->exams)) {
+            $this->exams = Exam::createQueryBuilder()
+                ->select()
+                ->where("course_id = ?", $this->id)
+                ->orderBy("exam_date", "DESC")
+                ->getAll();
+        }
+
+        return $this->exams;
+    }
+
+    /**
+     * Get a list of exams of the course for the logged-in user.
+     *
+     * @return Exam[] The exams of the course.
+     */
+    public function studentExams(): array
+    {
+        if (!isset($this->studentExams)) {
+            $this->studentExams = Exam::createQueryBuilder()
+                ->select("e.*")
+                ->from("exams", "e")
+                ->innerJoin("user_exams", "ue", "e.id = ue.exam_id")
+                ->where("ue.user_id = ?", Auth::id())
+                ->andWhere("e.course_id = ?", $this->id)
+                ->orderBy("exam_date", "DESC")
+                ->getAll();
+        }
+
+        return $this->studentExams;
     }
 
     /**

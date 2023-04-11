@@ -76,30 +76,35 @@
     </div>
     <div class="w-1/2">
         <aside class="sticky top-0 ml-32 px-6 h-screen bg-gray-100">
-            <div class="relative bg-gray-50 px-4 pt-16 h-screen space-y-4">
+            <div class="bg-gray-50 px-4 pt-16 h-screen space-y-4">
                 <h1 class="mb-4 text-2xl font-black">Upcoming exams</h1>
-                    @if(empty($exams))
-                        <p>There are no upcoming exams.</p>
-                    @else
-                        <ul class="space-y-4">
-                            @foreach($exams as $exam)
-                                <li>
-                                    <div class="p-4 text-white bg-black rounded-xl shadow-lg shadow-slate-200">
-                                        <p class="font-bold">
-                                            {{ $exam->course()->name }} ({{ $exam->course()->code }})
-                                        </p>
-                                        <p class="text-sm">
-                                            {{ $exam->name }}
-                                        </p>
-                                        <p class="text-sm">
-                                            {{ date('j F Y', strtotime($exam->exam_date)) }}
-                                        </p>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                <div class="absolute left-4 right-4 bottom-40">
+                @if(empty($exams))
+                    <p>There are no upcoming exams.</p>
+                @else
+                    <ul class="space-y-4 overflow-scroll h-2/3">
+                        @foreach($exams as $exam)
+                            <li>
+                                <div class="p-4 text-white bg-black rounded-xl shadow-lg shadow-slate-200">
+                                    <p class="font-bold">
+                                        {{ $exam->course()->name }} ({{ $exam->course()->code }})
+                                    </p>
+                                    <p class="text-sm">
+                                        {{ $exam->name }}
+                                    </p>
+                                    <p class="text-sm">
+                                        {{ date('j F Y', strtotime($exam->exam_date)) }}
+                                        @if($exam->duration !== null)
+                                            ({{ date('H:i', strtotime($exam->exam_date)) }}
+                                                -
+                                            {{ date('H:i', strtotime($exam->endsAt())) }})
+                                        @endif
+                                    </p>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+                <div class="">
                     <h1 class="mb-4 text-2xl font-black">Help</h1>
                     <a href="https://letmegooglethat.com/?q=How+do+I+use+Horus%3F" class="flex p-8 space-x-4 bg-secondary rounded-xl shadow-lg shadow-slate-200">
                         <p class="m-auto text-white font-bold">Help Centre</p>

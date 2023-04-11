@@ -17,8 +17,8 @@
 
             <p class="font-bold mt-4 mb-2">Exams</p>
             <ul class="space-y-4">
-                @if(count($course->exams()) > 0)
-                    @foreach($course->exams() as $exam)
+                @if(count($course->studentExams()) > 0)
+                    @foreach($course->studentExams() as $exam)
                         <li>
                             @if($exam->grade() !== null)
                                 <a href="{{ route('grades', [ 'g' => $exam->grade()->id ]) }}" class="flex">

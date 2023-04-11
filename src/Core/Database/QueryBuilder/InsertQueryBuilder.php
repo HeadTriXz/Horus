@@ -14,9 +14,10 @@ class InsertQueryBuilder
     protected array $columns = [];
     protected array $params = [];
     protected array $update = [];
-    protected string $tableName;
+    protected bool $ignore = false;
     protected int $rowCount = 0;
     protected string $select;
+    protected string $tableName;
 
     /**
      * Builds INSERT query to insert rows into the database.
@@ -43,6 +44,17 @@ class InsertQueryBuilder
     }
 
     /**
+     * Ignore errors while inserting
+     *
+     * @return $this
+     */
+    public function ignore(): self
+    {
+        $this->ignore = true;
+        return $this;
+    }
+
+    /**
      * Builds the complete query by concatenating all the parts and returns it as a string.
      *
      * @throws LogicException if no values are provided.
@@ -54,15 +66,22 @@ class InsertQueryBuilder
             throw new LogicException("No values provided.");
         }
 
+        $query = "INSERT ";
+        if ($this->ignore) {
+            $query .= "IGNORE ";
+        }
+
         $columns = implode(", ", $this->columns);
+        $query .= "INTO $this->tableName ($columns) ";
+
         if (isset($this->select)) {
-            $query = "INSERT INTO $this->tableName ($columns) {$this->select}";
+            $query .= $this->select;
         } else {
             $values = implode(", ", array_fill(0, $this->rowCount,
                 "(" . implode(", ", array_fill(0, count($this->columns), "?")) . ")"
             ));
 
-            $query = "INSERT INTO $this->tableName ($columns) VALUES $values";
+            $query .= "VALUES $values";
         }
 
         if (!empty($this->update)) {
