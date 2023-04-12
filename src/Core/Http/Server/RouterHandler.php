@@ -25,6 +25,18 @@ class RouterHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $routeSegments = explode("/", trim($this->route->getPath(), "/"));
+        $requestSegments = explode("/", trim($request->getUri()->getPath(), "/"));
+
+        for ($i = 0; $i < count($routeSegments); $i++) {
+            if (str_starts_with($routeSegments[$i], ":")) {
+                $key = substr($routeSegments[$i], 1);
+                $value = $requestSegments[$i];
+
+                $request = $request->withAttribute($key, $value);
+            }
+        }
+
         $middleware = array_shift($this->stack);
         if ($middleware !== null) {
             $chunks = explode(":", $middleware);

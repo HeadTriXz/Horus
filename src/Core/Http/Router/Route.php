@@ -104,7 +104,24 @@ class Route implements RouteInterface
         $requestPath = $request->getUri()->getPath();
         $routePath = $this->getPath();
 
-        return $requestPath === $routePath;
+        $routeSegments = explode("/", trim($routePath, "/"));
+        $requestSegments = explode("/", trim($requestPath, "/"));
+
+        if (count($routeSegments) !== count($requestSegments)) {
+            return false;
+        }
+
+        for ($i = 0; $i < count($routeSegments); $i++) {
+            if (str_starts_with($routeSegments[$i], ":")) {
+                continue;
+            }
+
+            if ($routeSegments[$i] !== $requestSegments[$i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

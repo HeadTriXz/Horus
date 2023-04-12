@@ -59,8 +59,8 @@ function route(string $name, array $params = []): ?string
 
     $path = $route->getPath();
     foreach ($params as $key => $value) {
-        if (str_contains($path, "\{$key}")) {
-            $path = str_replace("\{$key}", urlencode($value), $path);
+        if (str_contains($path, ":$key")) {
+            $path = str_replace(":$key", urlencode($value), $path);
             unset($params[$key]);
         }
     }

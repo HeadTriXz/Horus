@@ -56,6 +56,14 @@ interface RouterInterface
     public function handle(ServerRequestInterface $request): ResponseInterface;
 
     /**
+     * Find the route matching the request.
+     *
+     * @param ServerRequestInterface $request The request to match.
+     * @return ?RouteInterface
+     */
+    public function matchRoute(ServerRequestInterface $request): ?RouteInterface;
+
+    /**
      * Add a new PATCH route to the router.
      *
      * @param string $path The path for the route.

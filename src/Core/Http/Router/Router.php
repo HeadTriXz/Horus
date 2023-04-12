@@ -123,24 +123,38 @@ class Router implements RouterInterface, RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        try {
-            foreach ($this->routes as $route) {
-                if (!$route->match($request)) {
-                    continue;
+        $route = $this->matchRoute($request);
+        if ($route !== null) {
+            $handler = new RouterHandler($route, $this->container);
+            try {
+                return $handler->handle($request);
+            } catch (\Throwable $exception) {
+                if (getenv("DEBUG_ENABLED") === "true") {
+                    throw $exception;
                 }
 
-                $handler = new RouterHandler($route, $this->container);
-                return $handler->handle($request);
+                return new Response(500, "Internal Server Error");
             }
-        } catch (\Throwable $exception) {
-            if (getenv("DEBUG_ENABLED") === "true") {
-                throw $exception;
-            }
-
-            return new Response(500, "Internal Server Error");
         }
 
         return new Response(404, "Not Found");
+    }
+
+    /**
+     * Find the route matching the request.
+     *
+     * @param ServerRequestInterface $request The request to match.
+     * @return ?RouteInterface
+     */
+    public function matchRoute(ServerRequestInterface $request): ?RouteInterface
+    {
+        foreach ($this->routes as $route) {
+            if ($route->match($request)) {
+                return $route;
+            }
+        }
+
+        return null;
     }
 
     /**
