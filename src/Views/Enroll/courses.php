@@ -1,7 +1,7 @@
 @layout('app.php')
 <div class="flex">
     <div class="w-1/2 p-4 sm:ml-64">
-        <h1 class="mb-4 text-2xl font-black">Available courses</h1>
+        <h1 class="mb-4 text-2xl font-bold">Available courses</h1>
         <ul class="space-y-4">
             @if(count($courses) > 0)
                 @foreach($courses as $course)

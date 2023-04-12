@@ -1,6 +1,7 @@
 <?php
 
 use Horus\Controllers\Auth\LoginController;
+use Horus\Controllers\Auth\PasswordController;
 use Horus\Controllers\CourseController;
 use Horus\Controllers\EnrollController;
 use Horus\Controllers\GradeController;
@@ -23,6 +24,8 @@ $router->middleware([Authenticate::class], function ($router) {
     $router->get("/grades", [GradeController::class, "index"])->name("grades");
     $router->get("/courses", [CourseController::class, "index"])->name("courses");
     $router->get("/profile", [UserController::class, "profile"])->name("profile");
+
+    $router->post("/password", [PasswordController::class, "update"])->name("password.update");
 
     $router->prefix("/enroll", function ($router) {
         $router->get("", [EnrollController::class, "index"])->name("enroll.index");

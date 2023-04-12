@@ -11,7 +11,7 @@ class UserController extends BaseController
     public function profile(): string
     {
         return View::render("Profiles/index.php", [
-            "user" => Auth::user()->first_name
+            "user" => Auth::user()
         ]);
     }
 }

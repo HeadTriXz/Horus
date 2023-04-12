@@ -1,7 +1,7 @@
 @layout('app.php')
 <div class="flex">
     <div class="w-1/2 p-4 sm:ml-64">
-        <h1 class="mb-4 text-2xl font-black">Recent grades</h1>
+        <h1 class="mb-4 text-2xl font-bold">Recent grades</h1>
         <ul class="space-y-4">
             @if(count($grades) > 0)
                 @foreach($grades as $grade)
@@ -30,7 +30,7 @@
             @endif
         </ul>
 
-        <h1 class="mt-8 mb-4 text-2xl font-black">Links</h1>
+        <h1 class="mt-8 mb-4 text-2xl font-bold">Links</h1>
         <div class="grid grid-cols-2 gap-4">
             <a href="https://digirooster.hanze.nl/" class="flex p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                 <div class="flex my-auto h-14 w-14 rounded-xl bg-secondary">
@@ -77,7 +77,7 @@
     <div class="w-1/2">
         <aside class="sticky top-0 ml-32 px-6 h-screen bg-gray-100">
             <div class="bg-gray-50 px-4 pt-16 h-screen space-y-4">
-                <h1 class="mb-4 text-2xl font-black">Upcoming exams</h1>
+                <h1 class="mb-4 text-2xl font-bold">Upcoming exams</h1>
                 @if(empty($exams))
                     <p>There are no upcoming exams.</p>
                 @else
@@ -105,7 +105,7 @@
                     </ul>
                 @endif
                 <div class="">
-                    <h1 class="mb-4 text-2xl font-black">Help</h1>
+                    <h1 class="mb-4 text-2xl font-bold">Help</h1>
                     <a href="https://letmegooglethat.com/?q=How+do+I+use+Horus%3F" class="flex p-8 space-x-4 bg-secondary rounded-xl shadow-lg shadow-slate-200">
                         <p class="m-auto text-white font-bold">Help Centre</p>
                         <div class="text-white text-2xl font-bold m-auto">

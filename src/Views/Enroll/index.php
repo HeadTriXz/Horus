@@ -1,6 +1,6 @@
 @layout('app.php')
 <div class="flex flex-col h-screen items-center justify-center p-4 space-y-4 sm:ml-64">
-    <h1 class="text-2xl font-black">Enroll</h1>
+    <h1 class="text-2xl font-bold">Enroll</h1>
     <a href="{{ route('enroll.courses') }}" class="flex w-72 p-4 space-x-4 bg-secondary hover:bg-secondary-hover rounded-xl shadow-lg shadow-slate-200">
         <div class="text-white text-2xl font-bold">
             <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75" fill="none" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
