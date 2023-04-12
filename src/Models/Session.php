@@ -10,7 +10,6 @@ class Session extends Model
 
     public string $id;
     public string $expires_at;
-    public int $user_id;
 
     public function destroy(): bool
     {
@@ -25,18 +24,40 @@ class Session extends Model
         return strtotime($this->expires_at) <= time();
     }
 
-    public static function open(int $userId): static
+    public static function open(): static
     {
         $expiresAt = strtotime("+1 day");
         $session = new static();
         $session->id = static::generateId();
-        $session->user_id = $userId;
         $session->expires_at = date("Y-m-d H:i:s", $expiresAt);
 
         setcookie("session_id", $session->id, $expiresAt);
 
         $session->save();
         return $session;
+    }
+
+    public function get(string $key): ?string
+    {
+        return SessionProperty::findOne([
+            "session_id" => $this->id,
+            "p_key" => $key
+        ])?->p_value;
+    }
+
+    public function set(string $key, string $value): void
+    {
+        SessionProperty::createQueryBuilder()
+            ->insert()
+            ->values([
+                "session_id" => $this->id,
+                "p_key" => $key,
+                "p_value" => $value
+            ])
+            ->orUpdate([
+                "p_value" => $value
+            ])
+            ->execute();
     }
 
     protected static function generateId(): string

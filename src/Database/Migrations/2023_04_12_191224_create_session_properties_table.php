@@ -4,7 +4,7 @@ use Horus\Core\Application;
 use Horus\Core\Database\MigrationInterface;
 
 /**
- * Represents the migrations for the sessions table.
+ * Represents the migrations for the session properties table.
  */
 return new class implements MigrationInterface {
     /**
@@ -13,7 +13,7 @@ return new class implements MigrationInterface {
     public function down(): void
     {
         $database = Application::getInstance()->getDatabase();
-        $database->execute("DROP TABLE IF EXISTS sessions;");
+        $database->execute("DROP TABLE IF EXISTS session_properties;");
     }
 
     /**
@@ -23,9 +23,14 @@ return new class implements MigrationInterface {
     {
         $database = Application::getInstance()->getDatabase();
         $database->execute("
-            CREATE TABLE sessions (
-                id VARCHAR(32) PRIMARY KEY,
-                expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            CREATE TABLE session_properties (
+                session_id VARCHAR(32) NOT NULL,
+                p_key VARCHAR(255) NOT NULL,
+                p_value VARCHAR(255) NOT NULL,
+                PRIMARY KEY (session_id, p_key),
+                FOREIGN KEY (session_id)
+                    REFERENCES sessions(id)
+                    ON DELETE CASCADE
             )
         ");
     }

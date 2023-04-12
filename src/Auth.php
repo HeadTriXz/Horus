@@ -15,7 +15,7 @@ class Auth
 
     public static function id(): ?string
     {
-        return static::session()?->user_id;
+        return static::session()?->get("user_id");
     }
 
     public static function session(): ?Session
