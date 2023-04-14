@@ -4,5 +4,8 @@
             New course
         </a>
     @endblock
-    @component('Admin/course-details.php', [ 'course' => $selected ]) @endcomponent
+
+    @component('Admin/course-details.php', [ 'course' => $selected ])
+        @component('Admin/course-update.php') @endcomponent
+    @endcomponent
 @endlayout

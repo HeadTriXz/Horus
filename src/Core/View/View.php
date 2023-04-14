@@ -6,7 +6,6 @@ use InvalidArgumentException;
 
 class View
 {
-    protected const ARG_REGEX = "\s*\(['\"]?(.*?)['\"]?,?\s*(\[[^)]*)?\)";
     protected const CALL_REGEX = "\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/";
 
     public static function render(string $view, array $data = []): string
@@ -44,7 +43,7 @@ class View
 
         // Imports
         $content = preg_replace("/@use" . self::CALL_REGEX, "<?php use \$1; ?>", $content);
-        $content = preg_replace_callback("/@include" . self::ARG_REGEX . "/", function ($matches) use ($data) {
+        $content = preg_replace_callback("/@include\s*\(['\"]?(.*?)['\"]?,?\s*(\[[^)]*)?\)/", function ($matches) use ($data) {
             $params = [];
             if (!empty($matches[2])) {
                 $params = eval("return {$matches[2]};");
@@ -53,48 +52,45 @@ class View
             return static::render($matches[1], array_merge($data, $params));
         }, $content);
 
-        // Layout
-        $content = preg_replace_callback("/@layout" . self::ARG_REGEX . "([\s\S]*?)@endlayout/", function ($matches) use ($data) {
-            return static::replaceComponent("Layouts/", $matches, $data);
-        }, $content);
-
-        // Component
-        $content = preg_replace_callback("/@component" . self::ARG_REGEX . "([\s\S]*?)@endcomponent/", function ($matches) use ($data) {
-            return static::replaceComponent("Components/", $matches, $data);
-        }, $content);
+        $content = self::replaceComponent("layout", "Layouts/", $content, $data);
+        $content = self::replaceComponent("component", "Components/", $content, $data);
 
         return $content;
     }
 
-    protected static function replaceComponent(string $path, array $matches, array $data): string
+    protected static function replaceComponent(string $type, string $path, string $content, array $data): string
     {
-        $params = [];
-        if (!empty($matches[2])) {
-            extract($data, EXTR_SKIP);
-            $params = eval("return {$matches[2]};");
-        }
+        $pattern = "/@$type\s*\(\s*['\"]([^'\"]+)['\"](?:\s*,\s*(\[[^]]+]))?\s*\)((?:(?>[^@]+)|@(?!$type|end$type)|(?R))*)@end$type/";
 
-        $childContent = $matches[3];
-        $childData = array_merge($data, $params, ["__blockContent" => []]);
-
-        $childContent = preg_replace_callback("/@block\s*\(['\"]?(.*?)['\"]?\)([\s\S]*?)@endblock/", function ($matches) use (&$childData) {
-            $blockName = $matches[1];
-            $blockContent = $matches[2];
-
-            if (!isset($childData["__blockContent"][$blockName])) {
-                $childData["__blockContent"][$blockName] = "";
+        return preg_replace_callback($pattern, function ($matches) use ($path, $data) {
+            $params = [];
+            if (!empty($matches[2])) {
+                extract($data, EXTR_SKIP);
+                $params = eval("return {$matches[2]};");
             }
 
-            $childData["__blockContent"][$blockName] .= $blockContent;
-            return "";
-        }, $childContent);
+            $childData = array_merge($data, $params, ["__blockContent" => []]);
+            $childContent = self::replacePlaceholders($matches[3], $childData);
 
-        $parentContent = static::render($path . $matches[1], $childData);
-        $content = str_replace("@content()", $childContent, $parentContent);
-        foreach ($childData["__blockContent"] as $blockName => $blockContent) {
-            $content = preg_replace("/@content\s*\(['\"]?" . $blockName . "['\"]?\)/", $blockContent, $content);
-        }
+            $childContent = preg_replace_callback("/@block\s*\(['\"]?(.*?)['\"]?\)([\s\S]*?)@endblock/", function ($matches) use (&$childData) {
+                $blockName = $matches[1];
+                $blockContent = $matches[2];
 
-        return $content;
+                if (!isset($childData["__blockContent"][$blockName])) {
+                    $childData["__blockContent"][$blockName] = "";
+                }
+
+                $childData["__blockContent"][$blockName] .= $blockContent;
+                return "";
+            }, $childContent);
+
+            $parentContent = static::render($path . $matches[1], $childData);
+            $content = str_replace("@content()", $childContent, $parentContent);
+            foreach ($childData["__blockContent"] as $blockName => $blockContent) {
+                $content = preg_replace("/@content\s*\(['\"]?" . $blockName . "['\"]?\)/", $blockContent, $content);
+            }
+
+            return $content;
+        }, $content);
     }
 }

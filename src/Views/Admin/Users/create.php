@@ -4,5 +4,6 @@
             Go back
         </a>
     @endblock
+
     @component('Admin/user-create.php') @endcomponent
 @endlayout

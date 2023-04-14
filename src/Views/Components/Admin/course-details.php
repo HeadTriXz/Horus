@@ -38,6 +38,6 @@
             </ul>
         </div>
 
-        @component('Admin/course-update.php') @endcomponent
+        @content()
     @endif
 </aside>

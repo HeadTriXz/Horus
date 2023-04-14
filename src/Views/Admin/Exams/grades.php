@@ -4,5 +4,6 @@
             Go back
         </a>
     @endblock
+
     @component('Admin/grades-manage.php', [ 'exam' => $selected ]) @endcomponent
 @endlayout

@@ -4,5 +4,6 @@
             Go back
         </a>
     @endblock
+
     @component('Admin/course-create.php') @endcomponent
 @endlayout

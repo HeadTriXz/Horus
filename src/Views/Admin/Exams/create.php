@@ -4,5 +4,6 @@
             Go back
         </a>
     @endblock
+
     @component('Admin/exam-create.php') @endcomponent
 @endlayout

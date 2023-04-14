@@ -23,6 +23,6 @@
             </a>
         </div>
 
-        @component('Admin/exam-update.php') @endcomponent
+        @content()
     @endif
 </aside>

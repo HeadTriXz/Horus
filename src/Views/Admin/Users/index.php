@@ -4,5 +4,6 @@
             New user
         </a>
     @endblock
+
     @component('Admin/user-details.php', [ 'user' => $selected ]) @endcomponent
 @endlayout

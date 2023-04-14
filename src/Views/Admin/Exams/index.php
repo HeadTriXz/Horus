@@ -4,5 +4,8 @@
             New exam
         </a>
     @endblock
-    @component('Admin/exam-details.php', [ 'exam' => $selected ]) @endcomponent
+
+    @component('Admin/exam-details.php', [ 'exam' => $selected ])
+        @component('Admin/exam-update.php') @endcomponent
+    @endcomponent
 @endlayout
