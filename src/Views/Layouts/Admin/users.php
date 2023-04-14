@@ -3,9 +3,7 @@
     <div class="w-1/2 p-4 sm:ml-64">
         <div class="flex items-center space-x-4 mb-4">
             <h1 class="text-2xl font-bold">Users</h1>
-            <a href="{{ route('users.create') }}" class="text-white bg-secondary hover:bg-secondary-hover focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center">
-                New user
-            </a>
+            @content('new-button')
         </div>
         <form class="flex items-center mb-4">
             <label for="search" class="sr-only">Search</label>
@@ -79,7 +77,7 @@
     </div>
 
     <div class="w-1/2 bg-gray-100">
-        @content
+        @content()
     </div>
 </div>
 @endlayout

@@ -11,6 +11,6 @@
 ?>
 
 <a href="{{ route($route) }}" class="{{ $classes }}">
-    @content
+    @content()
     <span class="ml-3">{{ $name }}</span>
 </a>

@@ -6,6 +6,9 @@ use InvalidArgumentException;
 
 class View
 {
+    protected const ARG_REGEX = "\s*\(['\"]?(.*?)['\"]?,?\s*(\[[^)]*)?\)";
+    protected const CALL_REGEX = "\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/";
+
     public static function render(string $view, array $data = []): string
     {
         $file = dirname(__DIR__, 2) . "/Views/" . $view;
@@ -26,25 +29,24 @@ class View
     public static function replacePlaceholders(string $content, array $data = []): string
     {
         // Placeholders
-        $content = preg_replace('/\{\{\s*(.*?)\s*}}/', '<?php echo htmlspecialchars($1, ENT_QUOTES); ?>', $content);
-        $content = preg_replace('/\{!!\s*(.*?)\s*!!}/', '<?php echo $1; ?>', $content);
+        $content = preg_replace("/\{\{\s*(.*?)\s*}}/", "<?php echo htmlspecialchars(\$1, ENT_QUOTES); ?>", $content);
+        $content = preg_replace("/\{!!\s*(.*?)\s*!!}/", "<?php echo \$1; ?>", $content);
 
         // If-statements
-        $content = preg_replace('/@if\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/', '<?php if($1): ?>', $content);
-        $content = preg_replace('/@elseif\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/', '<?php elseif($1): ?>', $content);
-        $content = preg_replace('/@else/', '<?php else: ?>', $content);
-        $content = preg_replace('/@endif/', '<?php endif; ?>', $content);
+        $content = preg_replace("/@if" . self::CALL_REGEX, "<?php if(\$1): ?>", $content);
+        $content = preg_replace("/@elseif" . self::CALL_REGEX, "<?php elseif(\$1): ?>", $content);
+        $content = str_replace("@else", "<?php else: ?>", $content);
+        $content = str_replace("@endif", "<?php endif; ?>", $content);
 
         // For-loop
-        $content = preg_replace('/@foreach\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/', '<?php foreach($1): ?>', $content);
-        $content = preg_replace('/@endforeach/', '<?php endforeach; ?>', $content);
+        $content = preg_replace("/@foreach". self::CALL_REGEX, "<?php foreach(\$1): ?>", $content);
+        $content = str_replace("@endforeach", "<?php endforeach; ?>", $content);
 
         // Imports
-        $content = preg_replace('/@use\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/', '<?php use $1; ?>', $content);
-        $content = preg_replace_callback('/@include\s*\([\'"]?(.*?)[\'"]?,?\s*(\[[^)]*)?\)/', function ($matches) use ($data) {
+        $content = preg_replace("/@use" . self::CALL_REGEX, "<?php use \$1; ?>", $content);
+        $content = preg_replace_callback("/@include" . self::ARG_REGEX . "/", function ($matches) use ($data) {
             $params = [];
             if (!empty($matches[2])) {
-                extract($data, EXTR_SKIP);
                 $params = eval("return {$matches[2]};");
             }
 
@@ -52,28 +54,46 @@ class View
         }, $content);
 
         // Layout
-        $content = preg_replace_callback('/@layout\s*\([\'"]?(.*?)[\'"]?,?\s*(\[[^)]*)?\)([\s\S]*?)@endlayout/', function ($matches) use ($data) {
-            $params = [];
-            if (!empty($matches[2])) {
-                extract($data, EXTR_SKIP);
-                $params = eval("return {$matches[2]};");
-            }
-
-            $content = static::render('Layouts/' . $matches[1], array_merge($data, $params));
-            return str_replace('@content', $matches[3], $content);
+        $content = preg_replace_callback("/@layout" . self::ARG_REGEX . "([\s\S]*?)@endlayout/", function ($matches) use ($data) {
+            return static::replaceComponent("Layouts/", $matches, $data);
         }, $content);
 
         // Component
-        $content = preg_replace_callback('/@component\s*\([\'"]?(.*?)[\'"]?,?\s*(\[[^)]*)?\)([\s\S]*?)@endcomponent/', function ($matches) use ($data) {
-            $params = [];
-            if (!empty($matches[2])) {
-                extract($data, EXTR_SKIP);
-                $params = eval("return {$matches[2]};");
+        $content = preg_replace_callback("/@component" . self::ARG_REGEX . "([\s\S]*?)@endcomponent/", function ($matches) use ($data) {
+            return static::replaceComponent("Components/", $matches, $data);
+        }, $content);
+
+        return $content;
+    }
+
+    protected static function replaceComponent(string $path, array $matches, array $data): string
+    {
+        $params = [];
+        if (!empty($matches[2])) {
+            extract($data, EXTR_SKIP);
+            $params = eval("return {$matches[2]};");
+        }
+
+        $childContent = $matches[3];
+        $childData = array_merge($data, $params, ["__blockContent" => []]);
+
+        $childContent = preg_replace_callback("/@block\s*\(['\"]?(.*?)['\"]?\)([\s\S]*?)@endblock/", function ($matches) use (&$childData) {
+            $blockName = $matches[1];
+            $blockContent = $matches[2];
+
+            if (!isset($childData["__blockContent"][$blockName])) {
+                $childData["__blockContent"][$blockName] = "";
             }
 
-            $content = static::render('Components/' . $matches[1], array_merge($data, $params));
-            return str_replace('@content', $matches[3], $content);
-        }, $content);
+            $childData["__blockContent"][$blockName] .= $blockContent;
+            return "";
+        }, $childContent);
+
+        $parentContent = static::render($path . $matches[1], $childData);
+        $content = str_replace("@content()", $childContent, $parentContent);
+        foreach ($childData["__blockContent"] as $blockName => $blockContent) {
+            $content = preg_replace("/@content\s*\(['\"]?" . $blockName . "['\"]?\)/", $blockContent, $content);
+        }
 
         return $content;
     }

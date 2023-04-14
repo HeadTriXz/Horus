@@ -5,7 +5,7 @@
             <span class="self-center text-xl font-semibold whitespace-nowrap">Horus</span>
         </a>
         <ul class="space-y-2 font-medium">
-            @content
+            @content()
 
             <li>
                 @component('nav-link.php', [ 'route' => 'profile', 'name' => 'Profile' ])

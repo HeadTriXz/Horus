@@ -100,7 +100,7 @@
         @endlayout
 
         <main>
-            @content
+            @content()
         </main>
     </div>
 </body>

@@ -259,7 +259,7 @@ class Stream implements StreamInterface
         }
 
         if ($string === false) {
-            throw new RuntimeException('Could not get the contents of the stream.');
+            throw new RuntimeException("Could not get the contents of the stream.");
         }
 
         return $string;

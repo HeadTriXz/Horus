@@ -89,7 +89,7 @@ class Uri implements UriInterface
         $path = $_SERVER["REQUEST_URI"];
         $query = $_SERVER["QUERY_STRING"] ?? "";
 
-        return new Uri(sprintf('%s://%s:%d%s%s', $protocol, $host, $port, $path, $query));
+        return new Uri(sprintf("%s://%s:%d%s%s", $protocol, $host, $port, $path, $query));
     }
 
     /**
@@ -357,7 +357,7 @@ class Uri implements UriInterface
      */
     protected function encodeFragment(string $fragment): string
     {
-        $fragment = ltrim($fragment, '#');
+        $fragment = ltrim($fragment, "#");
 
         if ($fragment === "") {
             return "";
@@ -446,7 +446,7 @@ class Uri implements UriInterface
         }
 
         if ($this->getFragment() !== "") {
-            $uri .= '#' . $this->getFragment();
+            $uri .= "#" . $this->getFragment();
         }
 
         return $uri;
