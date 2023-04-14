@@ -1,6 +1,6 @@
 <?php
 
-namespace Horus\Controllers\Admin;
+namespace Horus\Controllers;
 
 use DateTime;
 use Horus\Auth;
@@ -17,6 +17,13 @@ class ExamController extends BaseController
 {
     public function index(ServerRequestInterface $request): string
     {
+        return Auth::user()->isAdmin()
+            ? $this->admin($request)
+            : $this->teacher($request);
+    }
+
+    public function admin(ServerRequestInterface $request): string
+    {
         $error = Auth::session()->get("eu_error");
         if (isset($error)) {
             Auth::session()->delete("eu_error");
@@ -32,6 +39,20 @@ class ExamController extends BaseController
             "courses" => Course::find([]),
             "exams" => $exams,
             "error" => $error,
+            "selected" => $selected
+        ]);
+    }
+
+    public function teacher(ServerRequestInterface $request): string
+    {
+        $exams = Exam::where([])
+            ->orderBy("exam_date")
+            ->getAll();
+
+        $selected = $this->getSelected($exams, $request);
+
+        return View::render("Teacher/Exams/index.php", [
+            "exams" => $exams,
             "selected" => $selected
         ]);
     }

@@ -124,7 +124,7 @@ class CourseController extends BaseController
         $courses = Course::find([ "teacher_id" => Auth::id() ]);
         $selected = $this->getSelected($courses, $request);
 
-        return View::render("Teacher/courses.php", [
+        return View::render("Teacher/Courses/index.php", [
             "courses" => $courses,
             "selected" => $selected
         ]);
@@ -165,7 +165,7 @@ class CourseController extends BaseController
         $courses = array_merge($courses, $completedCourses);
         $selected = $this->getSelected($courses, $request);
 
-        return View::render("Student/courses.php", [
+        return View::render("Student/Courses/index.php", [
             "courses" => $courses,
             "selected" => $selected
         ]);

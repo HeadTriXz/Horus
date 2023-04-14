@@ -18,18 +18,29 @@ class HasRole implements MiddlewareInterface
      * If unable to produce the response itself, it may delegate to the provided
      * request handler to do so.
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler, string $role = null): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler, string ...$roles): ResponseInterface
     {
         $user = Auth::user();
-        if ($role === "admin" && !$user->isAdmin()) {
-            return new Response(404, "Not Found");
+        $authorized = false;
+
+        foreach ($roles as $role) {
+            if ($role === "admin" && $user->isAdmin()) {
+                $authorized = true;
+                break;
+            }
+
+            if ($role === "teacher" && $user->isTeacher()) {
+                $authorized = true;
+                break;
+            }
+
+            if ($role === "student" && $user->isStudent()) {
+                $authorized = true;
+                break;
+            }
         }
 
-        if ($role === "teacher" && !$user->isTeacher()) {
-            return new Response(404, "Not Found");
-        }
-
-        if ($role === "student" && !$user->isStudent()) {
+        if (!$authorized) {
             return new Response(404, "Not Found");
         }
 

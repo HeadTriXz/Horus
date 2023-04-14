@@ -59,21 +59,23 @@ class GradeController extends BaseController
             ->innerJoin("user_courses", "uc", "id = uc.user_id")
             ->getAll();
 
-        $grades = Grade::where([ "e.course_id" => $selected->course_id ])
-            ->innerJoin("exams", "e", "exam_id = e.id")
-            ->andWhere("student_id IN (" . implode(", ", array_column($students, "id")) . ")")
-            ->getAll();
+        if (!empty($students)) {
+            $grades = Grade::where([ "e.course_id" => $selected->course_id ])
+                ->innerJoin("exams", "e", "exam_id = e.id")
+                ->andWhere("student_id IN (" . implode(", ", array_column($students, "id")) . ")")
+                ->getAll();
 
-        foreach ($grades as $grade) {
-            foreach ($students as $student) {
-                if ($student->id === $grade->student_id) {
-                    $student->grade = $grade->grade;
-                    break;
+            foreach ($grades as $grade) {
+                foreach ($students as $student) {
+                    if ($student->id === $grade->student_id) {
+                        $student->grade = $grade->grade;
+                        break;
+                    }
                 }
             }
         }
 
-        return View::render("Admin/Exams/grades.php", [
+        return View::render("Teacher/Exams/grades.php", [
             "exams" => $exams,
             "selected" => $selected,
             "students" => $students

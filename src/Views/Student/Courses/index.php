@@ -48,7 +48,7 @@
         </ul>
     </div>
     <div class="w-1/2 bg-gray-100">
-        @component('Student/course-details.php', [ 'course' => $selected ]) @endcomponent
+        @component('Student/Courses/details.php', [ 'course' => $selected ]) @endcomponent
     </div>
 </div>
 @endlayout

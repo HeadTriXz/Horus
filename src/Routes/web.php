@@ -1,12 +1,12 @@
 <?php
 
-use Horus\Controllers\Admin\ExamController;
 use Horus\Controllers\Auth\LoginController;
 use Horus\Controllers\Auth\PasswordController;
 use Horus\Controllers\CourseController;
+use Horus\Controllers\EnrollController;
+use Horus\Controllers\ExamController;
 use Horus\Controllers\GradeController;
 use Horus\Controllers\HomeController;
-use Horus\Controllers\Student\EnrollController;
 use Horus\Controllers\UserController;
 use Horus\Core\Application;
 use Horus\Middleware\Authenticate;
@@ -29,6 +29,12 @@ $router->middleware([Authenticate::class], function ($router) {
 
     $router->post("/password", [PasswordController::class, "update"])->name("password.update");
 
+    $router->middleware([HasRole::class . ":teacher:admin"], function ($router) {
+        $router->get("/exams", [ExamController::class, "index"])->name("exams");
+        $router->get("/exams/:id/grades", [GradeController::class, "manage"])->name("grades.manage");
+        $router->post("/exams/:id/grades", [GradeController::class, "update"])->name("grades.update");
+    });
+
     $router->middleware([HasRole::class . ":admin"], function ($router) {
         $router->get("/users", [UserController::class, "index"])->name("users");
         $router->get("/users/new", [UserController::class, "create"])->name("users.create");
@@ -39,17 +45,9 @@ $router->middleware([Authenticate::class], function ($router) {
         $router->post("/courses/new", [CourseController::class, "store"])->name("courses.store");
         $router->post("/courses/:id", [CourseController::class, "update"])->name("courses.update");
 
-        $router->get("/exams", [ExamController::class, "index"])->name("exams");
         $router->get("/exams/new", [ExamController::class, "create"])->name("exams.create");
         $router->post("/exams/new", [ExamController::class, "store"])->name("exams.store");
         $router->post("/exams/:id", [ExamController::class, "update"])->name("exams.update");
-
-        $router->get("/exams/:id/grades", [GradeController::class, "manage"])->name("grades.manage");
-        $router->post("/exams/:id/grades", [GradeController::class, "update"])->name("grades.update");
-    });
-
-    $router->middleware([HasRole::class . ":teacher"], function ($router) {
-
     });
 
     $router->middleware([HasRole::class . ":student"], function ($router) {

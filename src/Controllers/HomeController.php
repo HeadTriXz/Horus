@@ -24,12 +24,12 @@ class HomeController extends BaseController
 
     protected function admin(): string
     {
-        return View::render("Admin/home.php");
+        return $this->teacher();
     }
 
     protected function teacher(): string
     {
-        return $this->admin();
+        return View::render("Teacher/home.php");
     }
 
     protected function student(): string

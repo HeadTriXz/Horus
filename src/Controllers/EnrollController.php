@@ -1,6 +1,6 @@
 <?php
 
-namespace Horus\Controllers\Student;
+namespace Horus\Controllers;
 
 use Horus\Auth;
 use Horus\Core\Controller\BaseController;
