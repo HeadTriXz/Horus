@@ -1,16 +1,21 @@
 @layout('app.php')
 <div class="flex">
     <div class="w-1/2 p-4 sm:ml-64">
-        <h1 class="mb-4 text-2xl font-bold">Available courses</h1>
+        <div class="flex items-center space-x-4 mb-4">
+            <h1 class="text-2xl font-bold">Exams</h1>
+            <a href="{{ route('exams.create') }}" class="text-white bg-secondary hover:bg-secondary-hover focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center">
+                New exam
+            </a>
+        </div>
         <ul class="space-y-4">
-            @if(count($courses) > 0)
-                @foreach($courses as $course)
+            @if(count($exams) > 0)
+                @foreach($exams as $exam)
                     <li>
-                        <a href="{{ route('enroll.courses', [ 'c' => $course->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
+                        <a href="{{ route('exams', [ 'e' => $exam->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                             <?php
-                            $bgColor = $course->id === $selectedCourse?->id
-                                ? "bg-black"
-                                : "bg-secondary";
+                                $bgColor = isset($selected) && $exam->id === $selected->id
+                                    ? "bg-black"
+                                    : "bg-secondary";
                             ?>
                             <div class="flex my-auto h-14 w-14 rounded-xl {{ $bgColor }}">
                                 <p class="text-white text-2xl font-bold m-auto">
@@ -19,20 +24,29 @@
                                     </svg>
                                 </p>
                             </div>
-                            <div class="my-auto">
-                                <p class="font-bold">{{ $course->name }}</p>
-                                <p class="text-sm">{{ $course->code }}</p>
+                            <div>
+                                <div class="flex flex-wrap items-center font-bold">
+                                    <p class="truncate mr-2 max-w-[34rem]">{{ $exam->course()->name }}</p>
+                                    <p class="text-gray-600">({{ $exam->course()->code }})</p>
+                                </div>
+
+                                <p class="text-sm">
+                                    {{ $exam->name }}
+                                </p>
+                                <p class="text-sm">
+                                    {{ date('j F Y', strtotime($exam->exam_date)) }}
+                                </p>
                             </div>
                         </a>
                     </li>
                 @endforeach
             @else
-                <p>There are no available courses.</p>
+                <p>There are no exams.</p>
             @endif
         </ul>
     </div>
     <div class="w-1/2 bg-gray-100">
-        @component('Enroll/course-details.php', [ 'course' => $selectedCourse ]) @endcomponent
+        @content
     </div>
 </div>
 @endlayout

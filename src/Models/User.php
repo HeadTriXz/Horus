@@ -31,6 +31,16 @@ class User extends Model
         return $this->role === UserRole::TEACHER->value;
     }
 
+    public function prettyRole(): string
+    {
+        return match (UserRole::tryFrom($this->role)) {
+            UserRole::STUDENT => "Student",
+            UserRole::TEACHER => "Teacher",
+            UserRole::ADMIN => "Admin",
+            default => "Unknown"
+        };
+    }
+
     public function verifyPassword(string $password): bool
     {
         return password_verify($password, $this->password);

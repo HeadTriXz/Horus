@@ -1,6 +1,6 @@
 <?php
 
-namespace Horus\Controllers;
+namespace Horus\Controllers\Student;
 
 use Horus\Auth;
 use Horus\Core\Controller\BaseController;
@@ -18,7 +18,7 @@ class EnrollController extends BaseController
 {
     public function index(): string
     {
-        return View::render("Enroll/index.php");
+        return View::render("Student/Enroll/index.php");
     }
 
     public function courses(ServerRequestInterface $request): string
@@ -34,11 +34,11 @@ class EnrollController extends BaseController
                 Auth::id())
             ->getAll();
 
-        $selectedCourse = $this->getSelectedItem($request, "c", $courses);
+        $selected = $this->getSelectedItem($request, "c", $courses);
 
-        return View::render("Enroll/courses.php", [
+        return View::render("Student/Enroll/courses.php", [
             "courses" => $courses,
-            "selectedCourse" => $selectedCourse
+            "selected" => $selected
         ]);
     }
 
@@ -58,7 +58,7 @@ class EnrollController extends BaseController
 
         $selectedExam = $this->getSelectedItem($request, "e", $exams);
 
-        return View::render("Enroll/exams.php", [
+        return View::render("Student/Enroll/exams.php", [
             "exams" => $exams,
             "selectedExam" => $selectedExam
         ]);

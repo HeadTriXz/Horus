@@ -8,7 +8,7 @@
                     <li>
                         <a href="{{ route('grades', [ 'g' => $grade->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                             <?php
-                                $bgColor = $grade->id === $selectedGrade?->id
+                                $bgColor = $grade->id === $selected?->id
                                     ? "bg-black"
                                     : "bg-secondary";
                             ?>
@@ -37,7 +37,7 @@
         </ul>
     </div>
     <div class="w-1/2 bg-gray-100">
-        @component('grade-details.php', [ 'grade' => $selectedGrade ]) @endcomponent
+        @component('grade-details.php', [ 'grade' => $selected ]) @endcomponent
     </div>
 </div>
 @endlayout

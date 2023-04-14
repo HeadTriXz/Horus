@@ -27,7 +27,7 @@ class PasswordController extends BaseController
             ]);
         }
 
-        if (!$this->isSecure($body["new_password"])) {
+        if (!static::isSecure($body["new_password"])) {
             return View::render("Profiles/index.php", [
                 "error" => "The password does not match the requirements."
             ]);
@@ -46,7 +46,7 @@ class PasswordController extends BaseController
         return $this->redirect(route("profile"));
     }
 
-    public function isSecure(string $password): bool
+    public static function isSecure(string $password): bool
     {
         if (strlen($password) < self::MIN_LENGTH) {
             return false;

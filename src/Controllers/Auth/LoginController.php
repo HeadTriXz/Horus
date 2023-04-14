@@ -38,7 +38,9 @@ class LoginController extends BaseController
             ]);
         }
 
-        $session = Session::open($user->id);
+        $session = Session::open();
+        $session->set("user_id", $user->id);
+
         return $this->redirect("/")
             ->withAddedHeader(
                 "Set-Cookie",

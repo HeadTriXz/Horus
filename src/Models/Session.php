@@ -37,6 +37,15 @@ class Session extends Model
         return $session;
     }
 
+    public function delete(string $key): void
+    {
+        SessionProperty::createQueryBuilder()
+            ->delete()
+            ->where("session_id = ?", $this->id)
+            ->andWhere("p_key = ?", $key)
+            ->execute();
+    }
+
     public function get(string $key): ?string
     {
         return SessionProperty::findOne([
@@ -54,9 +63,7 @@ class Session extends Model
                 "p_key" => $key,
                 "p_value" => $value
             ])
-            ->orUpdate([
-                "p_value" => $value
-            ])
+            ->orUpdate([ "p_value" ])
             ->execute();
     }
 

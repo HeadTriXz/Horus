@@ -104,7 +104,7 @@
                         @endforeach
                     </ul>
                 @endif
-                <div class="">
+                <div>
                     <h1 class="mb-4 text-2xl font-bold">Help</h1>
                     <a href="https://letmegooglethat.com/?q=How+do+I+use+Horus%3F" class="flex p-8 space-x-4 bg-secondary rounded-xl shadow-lg shadow-slate-200">
                         <p class="m-auto text-white font-bold">Help Centre</p>

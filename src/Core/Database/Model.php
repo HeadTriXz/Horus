@@ -4,6 +4,7 @@ namespace Horus\Core\Database;
 
 use Horus\Core\Application;
 use Horus\Core\Database\QueryBuilder\QueryBuilder;
+use Horus\Core\Database\QueryBuilder\SelectQueryBuilder;
 use InvalidArgumentException;
 use LogicException;
 
@@ -67,14 +68,7 @@ abstract class Model
      */
     public static function find(array $where): array
     {
-        $qb = static::createQueryBuilder()
-            ->select();
-
-        foreach ($where as $key => $value) {
-            $qb->andWhere($key . " = ?", $value);
-        }
-
-        return $qb->getAll();
+        return static::where($where)->getAll();
     }
 
     /**
@@ -85,10 +79,7 @@ abstract class Model
      */
     public static function findById(string $id): ?static
     {
-        return static::createQueryBuilder()
-            ->select()
-            ->where(static::$primaryKey . " = ?", $id)
-            ->getOne();
+        return static::whereId($id)->getOne();
     }
 
     /**
@@ -99,14 +90,7 @@ abstract class Model
      */
     public static function findOne(array $where): ?static
     {
-        $qb = static::createQueryBuilder()
-            ->select();
-
-        foreach ($where as $key => $value) {
-            $qb->andWhere($key . " = ?", $value);
-        }
-
-        return $qb->getOne();
+        return static::where($where)->getOne();
     }
 
     /**
@@ -128,16 +112,73 @@ abstract class Model
     {
         $class = new \ReflectionClass($this);
 
+        $keys = [];
         $values = [];
         foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
             $values[$name] = $this->{$name};
+            $keys[] = $name;
         }
 
         return static::createQueryBuilder()
             ->insert()
             ->values($values)
-            ->orUpdate($values)
+            ->orUpdate($keys)
             ->execute();
+    }
+
+    /**
+     * Update entries in the database.
+     *
+     * @param string | array $where The WHERE clause.
+     * @param array $values The values to update.
+     * @return int The amount of affected rows.
+     */
+    public static function update(string | array $where, array $values): int
+    {
+        if (is_string($where)) {
+            $where = [ "id" => $where ];
+        }
+
+        $qb = static::createQueryBuilder()
+            ->update()
+            ->set($values);
+
+        foreach ($where as $key => $value) {
+            $qb->andWhere($key . " = ?", $value);
+        }
+
+        return $qb->execute();
+    }
+
+    /**
+     * Create a SELECT query that returns all rows that match the specified conditions.
+     *
+     * @param array $where The WHERE clause.
+     * @return SelectQueryBuilder
+     */
+    public static function where(array $where): SelectQueryBuilder
+    {
+        $qb = static::createQueryBuilder()
+            ->select();
+
+        foreach ($where as $key => $value) {
+            $qb->andWhere($key . " = ?", $value);
+        }
+
+        return $qb;
+    }
+
+    /**
+     * Create a SELECT query that returns all rows that match the specified ID.
+     *
+     * @param string $id The ID of the row.
+     * @return SelectQueryBuilder
+     */
+    public static function whereId(string $id): SelectQueryBuilder
+    {
+        return static::createQueryBuilder()
+            ->select()
+            ->where(static::$primaryKey . " = ?", $id);
     }
 }

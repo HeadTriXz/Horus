@@ -39,8 +39,7 @@ class InsertQueryBuilder
             throw new InvalidArgumentException("Database is required, but not provided.");
         }
 
-        $params = array_merge($this->params, array_values($this->update));
-        return $this->database->execute($this->getQuery(), $params);
+        return $this->database->execute($this->getQuery(), $this->params);
     }
 
     /**
@@ -85,7 +84,12 @@ class InsertQueryBuilder
         }
 
         if (!empty($this->update)) {
-            $query .= " ON DUPLICATE KEY UPDATE " . implode(" = ?, ", array_keys($this->update)) . " = ?";
+            $partials = [];
+            foreach ($this->update as $column) {
+                $partials[] = "$column = VALUES($column)";
+            }
+
+            $query .= " ON DUPLICATE KEY UPDATE " . implode(", ", $partials);
         }
 
         return $query;
@@ -107,20 +111,20 @@ class InsertQueryBuilder
     }
 
     /**
-     * Specifies the values to update on duplicate.
+     * Specifies the columns to update on duplicate.
      *
-     * @param array $values The values to update.
+     * @param array $columns The columns to update.
      *
-     * @throws InvalidArgumentException if the values array is not valid.
+     * @throws InvalidArgumentException if the columns array is not valid.
      * @return $this
      */
-    public function orUpdate(array $values): self
+    public function orUpdate(array $columns): self
     {
-        if (array_is_list($values)) {
-            throw new InvalidArgumentException("Argument must be an associative array.");
+        if (!array_is_list($columns)) {
+            throw new InvalidArgumentException("Argument must be an array of columns.");
         }
 
-        $this->update = $values;
+        $this->update = $columns;
         return $this;
     }
 

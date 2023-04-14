@@ -12,6 +12,28 @@ class HomeController extends BaseController
 {
     public function index(): string
     {
+        $user = Auth::user();
+        if ($user->isAdmin()) {
+            return $this->admin();
+        } elseif ($user->isTeacher()) {
+            return $this->teacher();
+        }
+
+        return $this->student();
+    }
+
+    protected function admin(): string
+    {
+        return View::render("Admin/home.php");
+    }
+
+    protected function teacher(): string
+    {
+        return $this->admin();
+    }
+
+    protected function student(): string
+    {
         $grades = Grade::createQueryBuilder()
             ->select()
             ->where("student_id = ?", Auth::id())
@@ -27,7 +49,7 @@ class HomeController extends BaseController
             ->andWhere("ue.user_id = ?", Auth::id())
             ->getAll();
 
-        return View::render("home.php", [
+        return View::render("Student/home.php", [
             "grades" => $grades,
             "exams" => $exams
         ]);

@@ -8,7 +8,7 @@
                     <li>
                         <a href="{{ route('courses', [ 'c' => $course->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                             <?php
-                                $bgColor = $course->id === $selectedCourse?->id
+                                $bgColor = isset($selected) && $course->id === $selected->id
                                     ? "bg-black"
                                     : "bg-secondary";
                             ?>
@@ -48,7 +48,7 @@
         </ul>
     </div>
     <div class="w-1/2 bg-gray-100">
-        @component('course-details.php', [ 'course' => $selectedCourse ]) @endcomponent
+        @component('Student/course-details.php', [ 'course' => $selected ]) @endcomponent
     </div>
 </div>
 @endlayout

@@ -73,13 +73,10 @@ class InsertQueryBuilderTest extends TestCase
                 "name" => "Peter",
                 "age" => 21
             ])
-            ->orUpdate([
-                "name" => "Peter",
-                "age" => 21
-            ])
+            ->orUpdate([ "name", "age" ])
             ->getQuery();
 
-        $expectedQuery = "INSERT INTO users (name, age) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?, age = ?";
+        $expectedQuery = "INSERT INTO users (name, age) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), age = VALUES(age)";
         $this->assertEquals($expectedQuery, $query);
     }
 }
