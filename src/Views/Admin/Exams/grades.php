@@ -5,5 +5,5 @@
         </a>
     @endblock
 
-    @component('Admin/grades-manage.php', [ 'exam' => $selected ]) @endcomponent
+    @component('Admin/Exams/grades.php', [ 'exam' => $selected ]) @endcomponent
 @endlayout

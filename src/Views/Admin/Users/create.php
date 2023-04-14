@@ -5,5 +5,5 @@
         </a>
     @endblock
 
-    @component('Admin/user-create.php') @endcomponent
+    @component('Admin/Users/create.php') @endcomponent
 @endlayout

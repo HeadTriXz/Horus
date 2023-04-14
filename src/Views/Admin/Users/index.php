@@ -5,5 +5,5 @@
         </a>
     @endblock
 
-    @component('Admin/user-details.php', [ 'user' => $selected ]) @endcomponent
+    @component('Admin/Users/details.php', [ 'user' => $selected ]) @endcomponent
 @endlayout

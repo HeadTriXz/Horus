@@ -5,7 +5,7 @@
         </a>
     @endblock
 
-    @component('Admin/exam-details.php', [ 'exam' => $selected ])
-        @component('Admin/exam-update.php') @endcomponent
+    @component('Admin/Exams/details.php', [ 'exam' => $selected ])
+        @component('Admin/Exams/update.php') @endcomponent
     @endcomponent
 @endlayout

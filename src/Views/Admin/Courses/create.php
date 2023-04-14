@@ -5,5 +5,5 @@
         </a>
     @endblock
 
-    @component('Admin/course-create.php') @endcomponent
+    @component('Admin/Courses/create.php') @endcomponent
 @endlayout

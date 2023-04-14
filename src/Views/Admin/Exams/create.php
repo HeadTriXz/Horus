@@ -5,5 +5,5 @@
         </a>
     @endblock
 
-    @component('Admin/exam-create.php') @endcomponent
+    @component('Admin/Exams/create.php') @endcomponent
 @endlayout

@@ -5,8 +5,14 @@
             <span class="self-center text-xl font-semibold whitespace-nowrap">Horus</span>
         </a>
         <ul class="space-y-2 font-medium">
+            <li>
+                @component('nav-link.php', [ 'route' => 'home', 'name' => 'Home' ])
+                    <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z" fill-rule="evenodd"></path>
+                    </svg>
+                @endcomponent
+            </li>
             @content()
-
             <li>
                 @component('nav-link.php', [ 'route' => 'profile', 'name' => 'Profile' ])
                     <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
