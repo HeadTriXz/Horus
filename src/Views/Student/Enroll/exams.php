@@ -1,14 +1,22 @@
 @layout('app.php')
 <div class="flex">
     <div class="w-1/2 p-4 sm:ml-64">
-        <h1 class="mb-4 text-2xl font-bold">Available exams</h1>
+        <div class="flex items-center space-x-4 mb-4">
+            <h1 class="text-2xl font-bold">Available exams</h1>
+            <a href="{{ route('enroll.index') }}" class="text-secondary border-2 border-secondary hover:border-secondary-hover focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2 text-center">
+                Go back
+            </a>
+        </div>
+        <form action="{{ route('enroll.exams') }}" class="flex items-center mb-4">
+            @component('search-bar.php') @endcomponent
+        </form>
         <ul class="space-y-4">
             @if(count($exams) > 0)
                 @foreach($exams as $exam)
                     <li>
                         <a href="{{ route('enroll.exams', [ 'e' => $exam->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                             <?php
-                                $bgColor = $exam->id === $selectedExam?->id
+                                $bgColor = $exam->id === $selected?->id
                                     ? "bg-black"
                                     : "bg-secondary";
                             ?>
@@ -41,7 +49,7 @@
         </ul>
     </div>
     <div class="w-1/2 bg-gray-100">
-        @component('Enroll/exam-details.php', [ 'exam' => $selectedExam ]) @endcomponent
+        @component('Enroll/exam-details.php', [ 'exam' => $selected ]) @endcomponent
     </div>
 </div>
 @endlayout

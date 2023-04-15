@@ -12,6 +12,7 @@ use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\View\View;
 use Horus\Enums\UserRole;
 use Horus\Models\User;
+use Horus\Utils;
 
 class UserController extends BaseController
 {
@@ -22,10 +23,10 @@ class UserController extends BaseController
             Auth::session()->delete("uu_error");
         }
 
-        $filter = null;
         $qb = User::where([])->orderBy("first_name");
-
         $params = $request->getQueryParams();
+
+        $filter = null;
         if (array_key_exists("f", $params)) {
             $role = UserRole::tryFrom($params["f"]);
 
@@ -35,27 +36,10 @@ class UserController extends BaseController
             }
         }
 
-        $search = "";
-        if (array_key_exists("q", $params)) {
-            $search = $params["q"];
-
-            if (!empty($search)) {
-                $qb->andWhere("LOWER(CONCAT(first_name, ' ', last_name)) LIKE LOWER(?)", "%{$search}%");
-                $qb->orWhere("id LIKE ?", "%{$search}%");
-            }
-        }
-
+        $search = Utils::searchRows($request, $qb, ["CONCAT(first_name, ' ', last_name)", "id"]);
         $users = $qb->getAll();
 
-        $selected = null;
-        if (array_key_exists("u", $params) && count($users) > 0) {
-            for ($i = 0; $i < count($users); $i++) {
-                if ($users[$i]->id == $params["u"]) {
-                    $selected = $users[$i];
-                    break;
-                }
-            }
-        }
+        $selected = Utils::getSelected("u", $users, $request);
 
         return View::render("Admin/Users/index.php", [
             "error" => $error,

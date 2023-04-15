@@ -13,6 +13,7 @@ use Horus\Core\View\View;
 use Horus\Enums\UserRole;
 use Horus\Models\Course;
 use Horus\Models\User;
+use Horus\Utils;
 
 class CourseController extends BaseController
 {
@@ -43,7 +44,8 @@ class CourseController extends BaseController
         return View::render("Admin/Courses/create.php", [
             "courses" => $courses,
             "error" => $error,
-            "teachers" => $teachers
+            "teachers" => $teachers,
+            "search" => null
         ]);
     }
 
@@ -104,8 +106,11 @@ class CourseController extends BaseController
             Auth::session()->delete("cu_error");
         }
 
-        $courses = Course::find([]);
-        $selected = $this->getSelected($courses, $request);
+        $qb = Course::where([])->orderBy("name");
+        $search = Utils::searchRows($request, $qb, ["name", "code"]);
+
+        $courses = $qb->getAll();
+        $selected = Utils::getSelected("c", $courses, $request);
 
         $teachers = User::where([ "role" => UserRole::TEACHER->value ])
             ->orderBy("first_name")
@@ -114,6 +119,7 @@ class CourseController extends BaseController
         return View::render("Admin/Courses/index.php", [
             "courses" => $courses,
             "error" => $error,
+            "search" => $search,
             "selected" => $selected,
             "teachers" => $teachers
         ]);
@@ -121,18 +127,24 @@ class CourseController extends BaseController
 
     protected function teacher(ServerRequestInterface $request): string
     {
-        $courses = Course::find([ "teacher_id" => Auth::id() ]);
-        $selected = $this->getSelected($courses, $request);
+        $qb = Course::where([ "teacher_id" => Auth::id() ])
+            ->orderBy("name");
+
+        $search = Utils::searchRows($request, $qb, ["name", "code"]);
+
+        $courses = $qb->getAll();
+        $selected = Utils::getSelected("c", $courses, $request);
 
         return View::render("Teacher/Courses/index.php", [
             "courses" => $courses,
-            "selected" => $selected
+            "selected" => $selected,
+            "search" => $search
         ]);
     }
 
     protected function student(ServerRequestInterface $request): string
     {
-        $courses = Course::createQueryBuilder()
+        $coursesBuilder = Course::createQueryBuilder()
             ->select("c.*")
             ->from("courses", "c")
             ->innerJoin("user_courses", "uc", "c.id = uc.course_id")
@@ -140,10 +152,12 @@ class CourseController extends BaseController
             ->leftJoin("grades", "g", "e.id = g.exam_id")
             ->where("uc.user_id = ?", Auth::id())
             ->andWhere("g.grade IS NULL")
-            ->groupBy("c.id")
-            ->getAll();
+            ->groupBy("c.id");
 
-        $completedCourses = Course::createQueryBuilder()
+        $search = Utils::searchRows($request, $coursesBuilder, ["c.name", "c.code"]);
+        $courses = $coursesBuilder->getAll();
+
+        $completedBuilder = Course::createQueryBuilder()
             ->select("c.*")
             ->from("courses", "c")
             ->innerJoin("user_courses", "uc", "c.id = uc.course_id")
@@ -159,40 +173,18 @@ class CourseController extends BaseController
                 ->select("1")
                 ->from("exams", "e")
                 ->where("e.course_id = c.id")
-                ->getQuery() . ")")
-            ->getAll();
+                ->getQuery() . ")");
+
+        Utils::searchRows($request, $completedBuilder, ["c.name", "c.code"]);
+        $completedCourses = $completedBuilder->getAll();
 
         $courses = array_merge($courses, $completedCourses);
-        $selected = $this->getSelected($courses, $request);
+        $selected = Utils::getSelected("c", $courses, $request);
 
         return View::render("Student/Courses/index.php", [
             "courses" => $courses,
-            "selected" => $selected
+            "selected" => $selected,
+            "search" => $search
         ]);
-    }
-
-    /**
-     * Gets the selected course using the query parameters.
-     *
-     * @param array $courses The array of courses.
-     * @param ServerRequestInterface $request The received request.
-     * @return ?Course
-     */
-    public function getSelected(array $courses, ServerRequestInterface $request): ?Course
-    {
-        $selected = null;
-        if (!empty($courses)) {
-            $selected = $courses[0];
-            $params = $request->getQueryParams();
-            if (array_key_exists("c", $params) && count($courses) > 0) {
-                for ($i = 0; $i < count($courses); $i++) {
-                    if ($courses[$i]->id == $params["c"]) {
-                        $selected = $courses[$i];
-                        break;
-                    }
-                }
-            }
-        }
-        return $selected;
     }
 }

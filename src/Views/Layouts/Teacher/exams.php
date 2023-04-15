@@ -5,6 +5,9 @@
             <h1 class="text-2xl font-bold">Exams</h1>
             @content('new-button')
         </div>
+        <form action="{{ route('exams') }}" class="flex items-center mb-4">
+            @component('search-bar.php') @endcomponent
+        </form>
         <ul class="space-y-4">
             @if(count($exams) > 0)
                 @foreach($exams as $exam)

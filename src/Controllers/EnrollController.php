@@ -13,6 +13,7 @@ use Horus\Models\Course;
 use Horus\Models\Exam;
 use Horus\Models\UserCourse;
 use Horus\Models\UserExam;
+use Horus\Utils;
 
 class EnrollController extends BaseController
 {
@@ -23,7 +24,7 @@ class EnrollController extends BaseController
 
     public function courses(ServerRequestInterface $request): string
     {
-        $courses = Course::createQueryBuilder()
+        $qb = Course::createQueryBuilder()
             ->select()
             ->from("courses", "c")
             ->where("c.id NOT IN (" . (new QueryBuilder())
@@ -31,20 +32,23 @@ class EnrollController extends BaseController
                 ->from("user_courses", "uc")
                 ->where("uc.user_id = ?")
                 ->getQuery() . ")",
-                Auth::id())
-            ->getAll();
+                Auth::id());
 
-        $selected = $this->getSelectedItem($request, "c", $courses);
+        $search = Utils::searchRows($request, $qb, ["c.name", "c.code"]);
+
+        $courses = $qb->getAll();
+        $selected = Utils::getSelected("c", $courses, $request);
 
         return View::render("Student/Enroll/courses.php", [
             "courses" => $courses,
-            "selected" => $selected
+            "selected" => $selected,
+            "search" => $search
         ]);
     }
 
     public function exams(ServerRequestInterface $request): string
     {
-        $exams = Exam::createQueryBuilder()
+        $qb = Exam::createQueryBuilder()
             ->select()
             ->from("exams", "e")
             ->where("e.exam_date > NOW()")
@@ -53,14 +57,17 @@ class EnrollController extends BaseController
                     ->from("user_exams", "ue")
                     ->where("ue.user_id = ?")
                     ->getQuery() . ")",
-                    Auth::id())
-            ->getAll();
+                    Auth::id());
 
-        $selectedExam = $this->getSelectedItem($request, "e", $exams);
+        $search = Utils::searchRows($request, $qb, ["e.name"]);
+
+        $exams = $qb->getAll();
+        $selected = Utils::getSelected("e", $exams, $request);
 
         return View::render("Student/Enroll/exams.php", [
             "exams" => $exams,
-            "selectedExam" => $selectedExam
+            "selected" => $selected,
+            "search" => $search
         ]);
     }
 
@@ -110,28 +117,5 @@ class EnrollController extends BaseController
             ->execute();
 
         return $this->redirect(route("enroll.exams"));
-    }
-
-    /**
-     * Get the selected item based on the request.
-     *
-     * @param ServerRequestInterface $request The received request.
-     * @param array $items An array of items to select from.
-     * @return ?mixed The selected item.
-     */
-    public function getSelectedItem(ServerRequestInterface $request, string $key, array $items): mixed
-    {
-        $params = $request->getQueryParams();
-        $selected = null;
-        if (array_key_exists($key, $params) && count($items) > 0) {
-            for ($i = 0; $i < count($items); $i++) {
-                if ($items[$i]->id == $params[$key]) {
-                    $selected = $items[$i];
-                    break;
-                }
-            }
-        }
-
-        return $selected;
     }
 }

@@ -5,8 +5,11 @@
             <h1 class="text-2xl font-bold">Courses</h1>
             @content('new-button')
         </div>
+        <form action="{{ route('courses') }}" class="flex items-center mb-4">
+            @component('search-bar.php') @endcomponent
+        </form>
         <ul class="space-y-4">
-            @if(count($courses) > 0)
+            @if(!empty($courses))
                 @foreach($courses as $course)
                     <li>
                         <a href="{{ route('courses', [ 'c' => $course->id ]) }}" class="flex w-full p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">

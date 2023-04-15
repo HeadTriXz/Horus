@@ -11,6 +11,7 @@ use Horus\Core\View\View;
 use Horus\Models\Exam;
 use Horus\Models\Grade;
 use Horus\Models\User;
+use Horus\Utils;
 
 class GradeController extends BaseController
 {
@@ -22,16 +23,7 @@ class GradeController extends BaseController
             ->orderBy("created_at", "DESC")
             ->getAll();
 
-        $params = $request->getQueryParams();
-        $selected = $grades[0];
-        if (array_key_exists("g", $params) && count($grades) > 0) {
-            for ($i = 0; $i < count($grades); $i++) {
-                if ($grades[$i]->id == $params["g"]) {
-                    $selected = $grades[$i];
-                    break;
-                }
-            }
-        }
+        $selected = Utils::getSelected("g", $grades, $request);
 
         return View::render("Student/Grades/index.php", [
             "grades" => $grades,
@@ -78,7 +70,8 @@ class GradeController extends BaseController
         return View::render("Teacher/Exams/grades.php", [
             "exams" => $exams,
             "selected" => $selected,
-            "students" => $students
+            "students" => $students,
+            "search" => null
         ]);
     }
 

@@ -2,6 +2,9 @@
 <div class="flex">
     <div class="w-1/2 p-4 sm:ml-64">
         <h1 class="mb-4 text-2xl font-bold">Your courses</h1>
+        <form action="{{ route('courses') }}" class="flex items-center mb-4">
+            @component('search-bar.php') @endcomponent
+        </form>
         <ul class="space-y-4">
             @if(count($courses) > 0)
                 @foreach($courses as $course)

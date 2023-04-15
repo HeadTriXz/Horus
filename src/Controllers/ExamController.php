@@ -12,6 +12,7 @@ use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\View\View;
 use Horus\Models\Course;
 use Horus\Models\Exam;
+use Horus\Utils;
 
 class ExamController extends BaseController
 {
@@ -29,31 +30,38 @@ class ExamController extends BaseController
             Auth::session()->delete("eu_error");
         }
 
-        $exams = Exam::where([])
-            ->orderBy("exam_date")
-            ->getAll();
+        $qb = Exam::where([])->orderBy("exam_date");
+        $search = Utils::searchRows($request, $qb, ["name"]);
 
-        $selected = $this->getSelected($exams, $request);
+        $exams = $qb->getAll();
+        $selected = Utils::getSelected("e", $exams, $request);
 
         return View::render("Admin/Exams/index.php", [
             "courses" => Course::find([]),
             "exams" => $exams,
             "error" => $error,
-            "selected" => $selected
+            "selected" => $selected,
+            "search" => $search
         ]);
     }
 
     public function teacher(ServerRequestInterface $request): string
     {
-        $exams = Exam::where([])
-            ->orderBy("exam_date")
-            ->getAll();
+        $qb = Exam::createQueryBuilder()
+            ->select("e.*")
+            ->from("exams", "e")
+            ->innerJoin("courses", "c", "e.course_id = c.id")
+            ->where("c.teacher_id = ?", Auth::id());
 
-        $selected = $this->getSelected($exams, $request);
+        $search = Utils::searchRows($request, $qb, ["e.name"]);
+
+        $exams = $qb->getAll();
+        $selected = Utils::getSelected("e", $exams, $request);
 
         return View::render("Teacher/Exams/index.php", [
             "exams" => $exams,
-            "selected" => $selected
+            "selected" => $selected,
+            "search" => $search
         ]);
     }
 
@@ -70,7 +78,8 @@ class ExamController extends BaseController
 
         return View::render("Admin/Exams/create.php", [
             "courses" => Course::find([]),
-            "exams" => $exams
+            "exams" => $exams,
+            "search" => null
         ]);
     }
 
@@ -131,30 +140,5 @@ class ExamController extends BaseController
         }
 
         return $this->redirect(route("exams", [ "e" => $id ]));
-    }
-
-    /**
-     * Gets the selected exam using the query parameters.
-     *
-     * @param array $exams The array of exams.
-     * @param ServerRequestInterface $request The received request.
-     * @return ?Exam
-     */
-    public function getSelected(array $exams, ServerRequestInterface $request): ?Exam
-    {
-        $selected = null;
-        if (!empty($exams)) {
-            $selected = $exams[0];
-            $params = $request->getQueryParams();
-            if (array_key_exists("e", $params)) {
-                for ($i = 0; $i < count($exams); $i++) {
-                    if ($exams[$i]->id == $params["e"]) {
-                        $selected = $exams[$i];
-                        break;
-                    }
-                }
-            }
-        }
-        return $selected;
     }
 }

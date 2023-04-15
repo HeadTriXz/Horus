@@ -46,6 +46,7 @@ class View
         $content = preg_replace_callback("/@include\s*\(['\"]?(.*?)['\"]?,?\s*(\[[^)]*)?\)/", function ($matches) use ($data) {
             $params = [];
             if (!empty($matches[2])) {
+                extract($data, EXTR_SKIP);
                 $params = eval("return {$matches[2]};");
             }
 
