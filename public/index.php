@@ -72,6 +72,7 @@ function route(string $name, array $params = []): ?string
     return $path;
 }
 
+// Define global request function
 function request(): ServerRequestInterface
 {
     static $request;

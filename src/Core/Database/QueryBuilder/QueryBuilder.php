@@ -5,8 +5,17 @@ namespace Horus\Core\Database\QueryBuilder;
 use Horus\Core\Database\Database;
 use Horus\Core\Database\Model;
 
+/**
+ * A class for building SQL queries.
+ */
 class QueryBuilder
 {
+    /**
+     * A class for building SQL queries.
+     *
+     * @param ?Database $database An optional instance of a Database object.
+     * @param ?string $model An optional name of a model class to be used for automatic table name selection.
+     */
     public function __construct(
         protected ?Database $database = null,
         protected ?string $model = null
@@ -64,8 +73,8 @@ class QueryBuilder
      * Creates a SELECT query and selects given data.
      *
      * @param string | array $column The column(s) to select. If an array is provided, each element should be
-     * either a string representing the column name, or an associative array containing the "column" key
-     * for the column name and optionally the "alias" key for an alias.
+     *      either a string representing the column name, or an associative array containing the "column" key
+     *      for the column name and optionally the "alias" key for an alias.
      * @param ?string $alias An optional alias for the single column provided as a string.
      * @return SelectQueryBuilder
      */

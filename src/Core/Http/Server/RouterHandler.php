@@ -9,10 +9,24 @@ use Horus\Core\Http\Message\ResponseInterface;
 use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\Http\Router\Route;
 
+/**
+ * A request handler for routing and handling HTTP requests.
+ */
 class RouterHandler implements RequestHandlerInterface
 {
+    /**
+     * The middleware stack for the route.
+     *
+     * @var array
+     */
     protected array $stack;
 
+    /**
+     * A request handler for routing and handling HTTP requests.
+     *
+     * @param Route $route The route object.
+     * @param ContainerInterface $container The container for dependency injection.
+     */
     public function __construct(
         protected Route $route,
         protected ContainerInterface $container
@@ -21,7 +35,12 @@ class RouterHandler implements RequestHandlerInterface
     }
 
     /**
+     * Processes an HTTP request and returns a response.
+     *
+     * @param ServerRequestInterface $request The HTTP request object.
+     *
      * @throws ContainerException Error while retrieving the entry.
+     * @return ResponseInterface The HTTP response object.
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -9,9 +9,32 @@ use InvalidArgumentException;
  */
 abstract class Message implements MessageInterface
 {
+    /**
+     * The body of the message.
+     *
+     * @var ?StreamInterface
+     */
     protected ?StreamInterface $body;
+
+    /**
+     * An array of header values where each header name is a key.
+     *
+     * @var array
+     */
     protected array $headers = [];
+
+    /**
+     * A mapping of lowercase header names to the original cased names.
+     *
+     * @var array
+     */
     protected array $headerNameMap = [];
+
+    /**
+     * The protocol version of the message.
+     *
+     * @var string
+     */
     protected string $protocol = "1.1";
 
     /**

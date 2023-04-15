@@ -11,7 +11,6 @@ class DotEnv
      * Loads an .env file.
      *
      * @param string $path The path of the .env file.
-     * @return void
      */
     public static function load(string $path): void
     {
@@ -21,7 +20,7 @@ class DotEnv
                 continue;
             }
 
-            list($name, $value) = explode("=", $line, 2);
+            [$name, $value] = explode("=", $line, 2);
             $name = trim($name);
             $value = trim($value);
 

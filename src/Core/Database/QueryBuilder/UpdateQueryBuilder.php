@@ -18,7 +18,18 @@ class UpdateQueryBuilder
     use OrderByClause;
     use WhereClause;
 
+    /**
+     * The columns to update.
+     *
+     * @var array
+     */
     protected array $columns = [];
+
+    /**
+     * The name of the table to update.
+     *
+     * @var string
+     */
     protected string $tableName;
 
     /**

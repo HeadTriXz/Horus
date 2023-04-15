@@ -9,14 +9,40 @@ use InvalidArgumentException;
  */
 class Request extends Message implements RequestInterface
 {
+    /**
+     * An array of valid HTTP methods.
+     */
     public const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"];
 
+    /**
+     * The request method.
+     *
+     * @var string
+     */
     protected string $method;
+
+    /**
+     * The request target.
+     *
+     * @var string
+     */
     protected string $requestTarget;
+
+    /**
+     * The request URI.
+     *
+     * @var UriInterface
+     */
     protected UriInterface $uri;
 
     /**
      * Represents an outgoing, client-side request.
+     *
+     * @param string $method The request method.
+     * @param UriInterface $uri The request URI.
+     * @param array $headers An array of headers.
+     * @param ?StreamInterface $body The body of the request.
+     * @param string $protocol The protocol version of the request.
      */
     public function __construct(
         string $method,

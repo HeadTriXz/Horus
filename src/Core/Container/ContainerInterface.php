@@ -36,7 +36,6 @@ interface ContainerInterface
      *
      * @param string $id Identifier of the entry.
      * @param mixed $instance The instance to add.
-     * @return void
      */
     public function set(string $id, mixed $instance): void;
 }

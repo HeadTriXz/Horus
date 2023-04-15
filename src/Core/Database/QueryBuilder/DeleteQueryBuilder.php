@@ -17,6 +17,11 @@ class DeleteQueryBuilder
     use OrderByClause;
     use WhereClause;
 
+    /**
+     * The name of the table to delete from.
+     *
+     * @var string
+     */
     protected string $tableName;
 
     /**

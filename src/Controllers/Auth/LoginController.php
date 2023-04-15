@@ -10,10 +10,15 @@ use Horus\Core\View\View;
 use Horus\Models\Session;
 use Horus\Models\User;
 
+/**
+ * Controller for managing authentication-related views and actions.
+ */
 class LoginController extends BaseController
 {
     /**
      * Display the login view.
+     *
+     * @return string The rendered view.
      */
     public function show(): string
     {
@@ -22,6 +27,9 @@ class LoginController extends BaseController
 
     /**
      * Handle an incoming authentication request.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string | ResponseInterface The rendered view or response instance.
      */
     public function login(ServerRequestInterface $request): string | ResponseInterface
     {
@@ -51,6 +59,8 @@ class LoginController extends BaseController
 
     /**
      * Destroy an authenticated session.
+     *
+     * @return ResponseInterface The response instance.
      */
     public function logout(): ResponseInterface
     {

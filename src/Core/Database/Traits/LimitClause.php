@@ -2,8 +2,16 @@
 
 namespace Horus\Core\Database\Traits;
 
+/**
+ * Provides methods to set the `LIMIT` clause of a query.
+ */
 trait LimitClause
 {
+    /**
+     * The `LIMIT` clause of the query.
+     *
+     * @var ?string
+     */
     protected ?string $limit;
 
     /**

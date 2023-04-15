@@ -10,10 +10,39 @@ use RuntimeException;
  */
 class Stream implements StreamInterface
 {
-    protected mixed $stream;
+    /**
+     * The underlying stream resource or object.
+     *
+     * @var string | resource
+     */
+    protected $stream;
+
+    /**
+     * Whether the stream is readable.
+     *
+     * @var bool
+     */
     protected bool $readable;
+
+    /**
+     * Whether the stream is seekable.
+     *
+     * @var bool
+     */
     protected bool $seekable;
+
+    /**
+     * Whether the stream is writable.
+     *
+     * @var bool
+     */
     protected bool $writable;
+
+    /**
+     * The size of the stream.
+     *
+     * @var ?int
+     */
     protected ?int $size;
 
     /**

@@ -19,11 +19,45 @@ class SelectQueryBuilder
     use OrderByClause;
     use WhereClause;
 
+    /**
+     * The columns to select.
+     *
+     * @var string
+     */
     protected string $columns = "*";
+
+    /**
+     * The columns to group the result by.
+     * @var ?string
+     */
     protected ?string $groupBy;
+
+    /**
+     * The `HAVING` clause of the query.
+     *
+     * @var ?string
+     */
     protected ?string $having;
+
+    /**
+     * The joins to add to the query.
+     *
+     * @var string
+     */
     protected string $joins = "";
+
+    /**
+     * The offset to start the result set from.
+     *
+     * @var ?string
+     */
     protected ?string $offset;
+
+    /**
+     * The name of the table to select from.
+     *
+     * @var string
+     */
     protected string $tableName;
 
     /**

@@ -14,8 +14,41 @@ use Horus\Enums\UserRole;
 use Horus\Models\User;
 use Horus\Utils;
 
+/**
+ * Controller for managing user-related views and actions.
+ */
 class UserController extends BaseController
 {
+    /**
+     * Display the form for creating a new user.
+     *
+     * @return string The rendered view.
+     */
+    public function create(): string
+    {
+        $error = Auth::session()->get("uc_error");
+        if (isset($error)) {
+            Auth::session()->delete("uc_error");
+        }
+
+        $users = User::where([])
+            ->orderBy("first_name")
+            ->getAll();
+
+        return View::render("Admin/Users/create.php", [
+            "users" => $users,
+            "error" => $error,
+            "filter" => null,
+            "search" => null
+        ]);
+    }
+
+    /**
+     * Display the list of users.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function index(ServerRequestInterface $request): string
     {
         $error = Auth::session()->get("uu_error");
@@ -50,25 +83,11 @@ class UserController extends BaseController
         ]);
     }
 
-    public function create(): string
-    {
-        $error = Auth::session()->get("uc_error");
-        if (isset($error)) {
-            Auth::session()->delete("uc_error");
-        }
-
-        $users = User::where([])
-            ->orderBy("first_name")
-            ->getAll();
-
-        return View::render("Admin/Users/create.php", [
-            "users" => $users,
-            "error" => $error,
-            "filter" => null,
-            "search" => null
-        ]);
-    }
-
+    /**
+     * Display the profile view for the current user.
+     *
+     * @return string The rendered view.
+     */
     public function profile(): string
     {
         return View::render("Profiles/index.php", [
@@ -76,6 +95,12 @@ class UserController extends BaseController
         ]);
     }
 
+    /**
+     * Store a new user in the database.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
     public function store(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
@@ -115,6 +140,12 @@ class UserController extends BaseController
         return $this->redirect(route("users", [ "u" => $id ]));
     }
 
+    /**
+     * Update an existing user.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
     public function update(ServerRequestInterface $request): ResponseInterface
     {
         $id = $request->getAttribute("id");

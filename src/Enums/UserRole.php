@@ -2,6 +2,9 @@
 
 namespace Horus\Enums;
 
+/**
+ * Represents the role of a user.
+ */
 enum UserRole: int
 {
     case STUDENT = 0;

@@ -15,13 +15,17 @@ use Horus\Models\UserCourse;
 use Horus\Models\UserExam;
 use Horus\Utils;
 
+/**
+ * Controller for enrolling in courses and exams
+ */
 class EnrollController extends BaseController
 {
-    public function index(): string
-    {
-        return View::render("Student/Enroll/index.php");
-    }
-
+    /**
+     * Display the available courses for enrollment.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function courses(ServerRequestInterface $request): string
     {
         $qb = Course::createQueryBuilder()
@@ -46,6 +50,12 @@ class EnrollController extends BaseController
         ]);
     }
 
+    /**
+     * Display the available exams for enrollment.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function exams(ServerRequestInterface $request): string
     {
         $qb = Exam::createQueryBuilder()
@@ -71,6 +81,22 @@ class EnrollController extends BaseController
         ]);
     }
 
+    /**
+     * Display the index page.
+     *
+     * @return string The rendered view.
+     */
+    public function index(): string
+    {
+        return View::render("Student/Enroll/index.php");
+    }
+
+    /**
+     * Store a new user course.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface A redirect response to the courses page.
+     */
     public function storeCourse(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
@@ -95,6 +121,12 @@ class EnrollController extends BaseController
         return $this->redirect(route("enroll.courses"));
     }
 
+    /**
+     * Store a new user exam.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface A redirect response to the exams page.
+     */
     public function storeExam(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();

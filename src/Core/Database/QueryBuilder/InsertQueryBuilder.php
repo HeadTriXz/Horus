@@ -11,12 +11,53 @@ use LogicException;
  */
 class InsertQueryBuilder
 {
+    /**
+     * The columns to be inserted.
+     *
+     * @var array
+     */
     protected array $columns = [];
+
+    /**
+     * The parameters of the query.
+     *
+     * @var array
+     */
     protected array $params = [];
+
+    /**
+     * The columns to be updated on duplicate key.
+     *
+     * @var array
+     */
     protected array $update = [];
+
+    /**
+     * Whether to ignore errors while inserting.
+     *
+     * @var bool
+     */
     protected bool $ignore = false;
+
+    /**
+     * The number of rows to be inserted.
+     *
+     * @var int
+     */
     protected int $rowCount = 0;
-    protected string $select;
+
+    /**
+     * The SELECT statement to be inserted.
+     *
+     * @var ?string
+     */
+    protected ?string $select;
+
+    /**
+     * The name of the table to insert into.
+     *
+     * @var string
+     */
     protected string $tableName;
 
     /**

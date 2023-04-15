@@ -9,18 +9,62 @@ use InvalidArgumentException;
  */
 class Uri implements UriInterface
 {
+    /**
+     * Standard ports for various URI schemes.
+     */
     protected const STANDARD_PORTS = [
         "http" => 80,
         "https" => 443,
         "ftp" => 21
     ];
 
+    /**
+     * The scheme component of the URI.
+     *
+     * @var string
+     */
     protected string $scheme = "";
+
+    /**
+     * The user information component of the URI.
+     *
+     * @var string
+     */
     protected string $userInfo = "";
+
+    /**
+     * The host component of the URI.
+     *
+     * @var string
+     */
     protected string $host = "";
+
+    /**
+     * The port component of the URI.
+     *
+     * @var ?int
+     */
     protected ?int $port = null;
+
+    /**
+     * The path component of the URI.
+     *
+     * @var string
+     */
     protected string $path = "";
+
+    /**
+     * The query component of the URI.
+     *
+     * @var string
+     */
     protected string $query = "";
+
+    /**
+     * The fragment component of the URI.
+     *
+     * @var string
+     */
     protected string $fragment = "";
 
     /**

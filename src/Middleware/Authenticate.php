@@ -9,6 +9,9 @@ use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\Http\Server\MiddlewareInterface;
 use Horus\Core\Http\Server\RequestHandlerInterface;
 
+/**
+ * Middleware to authenticate the user before allowing access to protected pages.
+ */
 class Authenticate implements MiddlewareInterface
 {
     /**
@@ -17,6 +20,11 @@ class Authenticate implements MiddlewareInterface
      * Processes an incoming server request in order to produce a response.
      * If unable to produce the response itself, it may delegate to the provided
      * request handler to do so.
+     *
+     * @param ServerRequestInterface $request The incoming server request.
+     * @param RequestHandlerInterface $handler The next handler in the middleware stack.
+     *
+     * @return ResponseInterface The response produced by the middleware.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

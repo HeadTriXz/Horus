@@ -11,6 +11,12 @@ class Response extends Message implements ResponseInterface
 {
     /**
      * Represents an outgoing, server-side response.
+     *
+     * @param int $statusCode The HTTP status code for the response.
+     * @param string $statusText The reason phrase associated with the status code.
+     * @param array $headers An array of headers.
+     * @param string | StreamInterface | null $body The response body.
+     * @param string $protocol The protocol version of the response.
      */
     public function __construct(
         protected int $statusCode = 200,

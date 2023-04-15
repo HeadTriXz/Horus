@@ -2,22 +2,39 @@
 
 namespace Horus;
 
-use Horus\Core\Container\ContainerException;
 use Horus\Models\Session;
 use Horus\Models\User;
 
+/**
+ * Utility class for checking user authentication.
+ */
 class Auth
 {
+    /**
+     * Check if the user is authenticated.
+     *
+     * @return bool Whether the user is authenticated.
+     */
     public static function check(): bool
     {
         return static::session() !== null;
     }
 
+    /**
+     * Get the ID of the authenticated user.
+     *
+     * @return ?string The ID of the authenticated user, if any.
+     */
     public static function id(): ?string
     {
         return static::session()?->get("user_id");
     }
 
+    /**
+     * Get the session of the authenticated user.
+     *
+     * @return ?Session The authenticated user's session, if any.
+     */
     public static function session(): ?Session
     {
         $cookies = request()->getCookieParams();
@@ -33,6 +50,11 @@ class Auth
         return $session;
     }
 
+    /**
+     * Get the authenticated user.
+     *
+     * @return ?User The authenticated user, if any.
+     */
     public static function user(): ?User
     {
         $id = static::id();

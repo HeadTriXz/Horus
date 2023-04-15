@@ -8,10 +8,22 @@ use Horus\Core\Http\Message\ResponseInterface;
 use Horus\Core\Http\Message\ServerRequestInterface;
 use Horus\Core\View\View;
 
+/**
+ * Controller for managing passwords.
+ */
 class PasswordController extends BaseController
 {
+    /**
+     * The minimum length of a secure password.
+     */
     protected const MIN_LENGTH = 10;
 
+    /**
+     * Update the password of a user.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string | ResponseInterface The rendered view or response instance.
+     */
     public function update(ServerRequestInterface $request): string | ResponseInterface
     {
         $body = $request->getParsedBody();
@@ -46,6 +58,12 @@ class PasswordController extends BaseController
         return $this->redirect(route("profile"));
     }
 
+    /**
+     * Check whether a password is secure based on certain requirements.
+     *
+     * @param string $password The password to check.
+     * @return bool Whether the password is secure.
+     */
     public static function isSecure(string $password): bool
     {
         if (strlen($password) < self::MIN_LENGTH) {

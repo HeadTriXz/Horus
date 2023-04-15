@@ -15,90 +15,17 @@ use Horus\Models\Course;
 use Horus\Models\User;
 use Horus\Utils;
 
+/**
+ * Controller for managing course-related views and actions.
+ */
 class CourseController extends BaseController
 {
-    public function index(ServerRequestInterface $request): string
-    {
-        $user = Auth::user();
-        if ($user->isAdmin()) {
-            return $this->admin($request);
-        } elseif ($user->isTeacher()) {
-            return $this->teacher($request);
-        } else {
-            return $this->student($request);
-        }
-    }
-
-    public function create(): string
-    {
-        $error = Auth::session()->get("cc_error");
-        if (isset($error)) {
-            Auth::session()->delete("cc_error");
-        }
-
-        $courses = Course::find([]);
-        $teachers = User::where([ "role" => UserRole::TEACHER->value ])
-            ->orderBy("first_name")
-            ->getAll();
-
-        return View::render("Admin/Courses/create.php", [
-            "courses" => $courses,
-            "error" => $error,
-            "teachers" => $teachers,
-            "search" => null
-        ]);
-    }
-
-    public function store(ServerRequestInterface $request): ResponseInterface
-    {
-        $body = $request->getParsedBody();
-        $existing = Course::findOne([
-            "code" => $body["code"]
-        ]);
-
-        if (isset($existing)) {
-            Auth::session()->set("cc_error", "The specified code is already in use.");
-            return $this->redirect(route("courses.create"));
-        } else {
-            Course::create([
-                "code" => $body["code"],
-                "name" => $body["name"],
-                "teacher_id" => $body["teacher"]
-            ]);
-        }
-
-        $id = Application::getInstance()
-            ->getDatabase()
-            ->getLastInsertId();
-
-        return $this->redirect(route("courses", [ "c" => $id ]));
-    }
-
-    public function update(ServerRequestInterface $request): string | ResponseInterface
-    {
-        $id = $request->getAttribute("id");
-        if (!isset($id)) {
-            return new Response(404, "Not Found");
-        }
-
-        $body = $request->getParsedBody();
-        $existing = Course::findOne([
-            "code" => $body["code"]
-        ]);
-
-        if (isset($existing) && $existing->id != $id) {
-            Auth::session()->set("cu_error", "The specified code is already in use.");
-        } else {
-            Course::update($id, [
-                "code" => $body["code"],
-                "name" => $body["name"],
-                "teacher_id" => $body["teacher"]
-            ]);
-        }
-
-        return $this->redirect(route("courses", [ "c" => $id ]));
-    }
-
+    /**
+     * Display the admin view of courses.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     protected function admin(ServerRequestInterface $request): string
     {
         $error = Auth::session()->get("cu_error");
@@ -125,23 +52,86 @@ class CourseController extends BaseController
         ]);
     }
 
-    protected function teacher(ServerRequestInterface $request): string
+    /**
+     * Display the form for creating a new course.
+     *
+     * @return string The rendered view.
+     */
+    public function create(): string
     {
-        $qb = Course::where([ "teacher_id" => Auth::id() ])
-            ->orderBy("name");
+        $error = Auth::session()->get("cc_error");
+        if (isset($error)) {
+            Auth::session()->delete("cc_error");
+        }
 
-        $search = Utils::searchRows($request, $qb, ["name", "code"]);
+        $courses = Course::find([]);
+        $teachers = User::where([ "role" => UserRole::TEACHER->value ])
+            ->orderBy("first_name")
+            ->getAll();
 
-        $courses = $qb->getAll();
-        $selected = Utils::getSelected("c", $courses, $request);
-
-        return View::render("Teacher/Courses/index.php", [
+        return View::render("Admin/Courses/create.php", [
             "courses" => $courses,
-            "selected" => $selected,
-            "search" => $search
+            "error" => $error,
+            "teachers" => $teachers,
+            "search" => null
         ]);
     }
 
+    /**
+     * Display the list of courses.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
+    public function index(ServerRequestInterface $request): string
+    {
+        $user = Auth::user();
+        if ($user->isAdmin()) {
+            return $this->admin($request);
+        } elseif ($user->isTeacher()) {
+            return $this->teacher($request);
+        } else {
+            return $this->student($request);
+        }
+    }
+
+    /**
+     * Store a new course in the database.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
+    public function store(ServerRequestInterface $request): ResponseInterface
+    {
+        $body = $request->getParsedBody();
+        $existing = Course::findOne([
+            "code" => $body["code"]
+        ]);
+
+        if (isset($existing)) {
+            Auth::session()->set("cc_error", "The specified code is already in use.");
+            return $this->redirect(route("courses.create"));
+        } else {
+            Course::create([
+                "code" => $body["code"],
+                "name" => $body["name"],
+                "teacher_id" => $body["teacher"]
+            ]);
+        }
+
+        $id = Application::getInstance()
+            ->getDatabase()
+            ->getLastInsertId();
+
+        return $this->redirect(route("courses", [ "c" => $id ]));
+    }
+
+    /**
+     * Display the student view of courses.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     protected function student(ServerRequestInterface $request): string
     {
         $coursesBuilder = Course::createQueryBuilder()
@@ -186,5 +176,59 @@ class CourseController extends BaseController
             "selected" => $selected,
             "search" => $search
         ]);
+    }
+
+    /**
+     * Display the teacher view of courses.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
+    protected function teacher(ServerRequestInterface $request): string
+    {
+        $qb = Course::where([ "teacher_id" => Auth::id() ])
+            ->orderBy("name");
+
+        $search = Utils::searchRows($request, $qb, ["name", "code"]);
+
+        $courses = $qb->getAll();
+        $selected = Utils::getSelected("c", $courses, $request);
+
+        return View::render("Teacher/Courses/index.php", [
+            "courses" => $courses,
+            "selected" => $selected,
+            "search" => $search
+        ]);
+    }
+
+    /**
+     * Update an existing course.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
+    public function update(ServerRequestInterface $request): ResponseInterface
+    {
+        $id = $request->getAttribute("id");
+        if (!isset($id)) {
+            return new Response(404, "Not Found");
+        }
+
+        $body = $request->getParsedBody();
+        $existing = Course::findOne([
+            "code" => $body["code"]
+        ]);
+
+        if (isset($existing) && $existing->id != $id) {
+            Auth::session()->set("cu_error", "The specified code is already in use.");
+        } else {
+            Course::update($id, [
+                "code" => $body["code"],
+                "name" => $body["name"],
+                "teacher_id" => $body["teacher"]
+            ]);
+        }
+
+        return $this->redirect(route("courses", [ "c" => $id ]));
     }
 }

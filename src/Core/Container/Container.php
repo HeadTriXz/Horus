@@ -5,9 +5,17 @@ namespace Horus\Core\Container;
 use ReflectionClass;
 use ReflectionException;
 
+/**
+ * A simple dependency injection container.
+ */
 class Container implements ContainerInterface
 {
-    private array $instances = [];
+    /**
+     * An array that holds instances.
+     *
+     * @var array
+     */
+    protected array $instances = [];
 
     /**
      * Finds an entry of the container by its identifier and returns it.

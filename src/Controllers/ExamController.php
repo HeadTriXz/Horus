@@ -14,15 +14,17 @@ use Horus\Models\Course;
 use Horus\Models\Exam;
 use Horus\Utils;
 
+/**
+ * Controller for managing exam-related views and actions.
+ */
 class ExamController extends BaseController
 {
-    public function index(ServerRequestInterface $request): string
-    {
-        return Auth::user()->isAdmin()
-            ? $this->admin($request)
-            : $this->teacher($request);
-    }
-
+    /**
+     * Display the admin view for exams.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function admin(ServerRequestInterface $request): string
     {
         $error = Auth::session()->get("eu_error");
@@ -45,26 +47,11 @@ class ExamController extends BaseController
         ]);
     }
 
-    public function teacher(ServerRequestInterface $request): string
-    {
-        $qb = Exam::createQueryBuilder()
-            ->select("e.*")
-            ->from("exams", "e")
-            ->innerJoin("courses", "c", "e.course_id = c.id")
-            ->where("c.teacher_id = ?", Auth::id());
-
-        $search = Utils::searchRows($request, $qb, ["e.name"]);
-
-        $exams = $qb->getAll();
-        $selected = Utils::getSelected("e", $exams, $request);
-
-        return View::render("Teacher/Exams/index.php", [
-            "exams" => $exams,
-            "selected" => $selected,
-            "search" => $search
-        ]);
-    }
-
+    /**
+     * Display the create exam view.
+     *
+     * @return string The rendered view.
+     */
     public function create(): string
     {
         $error = Auth::session()->get("ec_error");
@@ -83,6 +70,25 @@ class ExamController extends BaseController
         ]);
     }
 
+    /**
+     * Display the exams view for admins or teachers.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
+    public function index(ServerRequestInterface $request): string
+    {
+        return Auth::user()->isAdmin()
+            ? $this->admin($request)
+            : $this->teacher($request);
+    }
+
+    /**
+     * Store a new exam in the database.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
     public function store(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
@@ -112,6 +118,38 @@ class ExamController extends BaseController
         return $this->redirect(route("exams", [ "e" => $id ]));
     }
 
+    /**
+     * Display the teacher view for exams.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
+    public function teacher(ServerRequestInterface $request): string
+    {
+        $qb = Exam::createQueryBuilder()
+            ->select("e.*")
+            ->from("exams", "e")
+            ->innerJoin("courses", "c", "e.course_id = c.id")
+            ->where("c.teacher_id = ?", Auth::id());
+
+        $search = Utils::searchRows($request, $qb, ["e.name"]);
+
+        $exams = $qb->getAll();
+        $selected = Utils::getSelected("e", $exams, $request);
+
+        return View::render("Teacher/Exams/index.php", [
+            "exams" => $exams,
+            "selected" => $selected,
+            "search" => $search
+        ]);
+    }
+
+    /**
+     * Update an existing exam.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
     public function update(ServerRequestInterface $request): ResponseInterface
     {
         $id = $request->getAttribute("id");

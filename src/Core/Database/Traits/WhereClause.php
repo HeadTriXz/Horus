@@ -2,9 +2,23 @@
 
 namespace Horus\Core\Database\Traits;
 
+/**
+ * Provides methods to set the `WHERE` clause of a query.
+ */
 trait WhereClause
 {
+    /**
+     * The parameters of the query.
+     *
+     * @var array
+     */
     protected array $params = [];
+
+    /**
+     * The `WHERE` clause of the query.
+     *
+     * @var ?string
+     */
     protected ?string $where;
 
     /**

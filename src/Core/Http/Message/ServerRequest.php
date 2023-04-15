@@ -9,6 +9,17 @@ class ServerRequest extends Request implements ServerRequestInterface
 {
     /**
      * Represents an incoming, server-side HTTP request.
+     *
+     * @param string $method The request method.
+     * @param UriInterface $uri The request URI.
+     * @param array $headers An array of headers.
+     * @param ?StreamInterface $body The body of the request.
+     * @param string $protocol The protocol version of the request.
+     * @param array $serverParams An array of server parameters.
+     * @param array $cookieParams An array of cookie parameters.
+     * @param array $queryParams An array of query parameters.
+     * @param array $attributes Attribute values derived from the request.
+     * @param array | object | null $parsedBody Parsed body parameters.
      */
     public function __construct(
         string $method,

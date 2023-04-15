@@ -4,10 +4,27 @@ namespace Horus\Core\View;
 
 use InvalidArgumentException;
 
+/**
+ * Utility class used for rendering views.
+ */
 class View
 {
+    /**
+     * Regular expression pattern for matching "function" calls.
+     *
+     * @var string
+     */
     protected const CALL_REGEX = "\s*\(((?:(?:[^()]+|\((?:[^()]+|(?1))*\))*)+)\)/";
 
+    /**
+     * Render the view with the given data.
+     *
+     * @param string $view The name of the view file to render.
+     * @param array $data The data to be passed to the view file.
+     *
+     * @throws InvalidArgumentException if the view file does not exist.
+     * @return string The rendered content of the view file.
+     */
     public static function render(string $view, array $data = []): string
     {
         $file = dirname(__DIR__, 2) . "/Views/" . $view;
@@ -25,6 +42,14 @@ class View
         return ob_get_clean();
     }
 
+    /**
+     * Replace the placeholders in the given content with the values from the data.
+     *
+     * @param string $content The content to replace placeholders in.
+     * @param array $data The data to replace placeholders with.
+     *
+     * @return string The content with placeholders replaced by values.
+     */
     public static function replacePlaceholders(string $content, array $data = []): string
     {
         // Placeholders
@@ -59,6 +84,16 @@ class View
         return $content;
     }
 
+    /**
+     * Replace the component placeholders in the given content with the values from the data.
+     *
+     * @param string $type The type of component.
+     * @param string $path The path to the component directory.
+     * @param string $content The content to replace components in.
+     * @param array $data The data to pass to the components being rendered.
+     *
+     * @return string The content with components replaced by their rendered contents.
+     */
     protected static function replaceComponent(string $type, string $path, string $content, array $data): string
     {
         $pattern = "/@$type\s*\(\s*['\"]([^'\"]+)['\"](?:\s*,\s*(\[[^]]+]))?\s*\)((?:(?>[^@]+)|@(?!$type|end$type)|(?R))*)@end$type/";

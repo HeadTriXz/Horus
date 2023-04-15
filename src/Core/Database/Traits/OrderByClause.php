@@ -4,8 +4,16 @@ namespace Horus\Core\Database\Traits;
 
 use InvalidArgumentException;
 
+/**
+ * Provides methods to set the `ORDER BY` clause of a query.
+ */
 trait OrderByClause
 {
+    /**
+     * The `ORDER BY` clause of the query.
+     *
+     * @var ?string
+     */
     protected ?string $orderBy;
 
     /**

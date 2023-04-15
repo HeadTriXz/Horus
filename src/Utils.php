@@ -6,6 +6,9 @@ use Horus\Core\Database\Model;
 use Horus\Core\Database\QueryBuilder\SelectQueryBuilder;
 use Horus\Core\Http\Message\ServerRequestInterface;
 
+/**
+ * Utility class with various functions.
+ */
 class Utils
 {
     /**
@@ -34,6 +37,15 @@ class Utils
         return $rows[0];
     }
 
+    /**
+     * Searches rows based on specified filters and search query.
+     *
+     * @param ServerRequestInterface $request The received request.
+     * @param SelectQueryBuilder $qb The query builder instance.
+     * @param array $filters The filters to apply.
+     *
+     * @return ?string The search query if specified, null otherwise.
+     */
     public static function searchRows(ServerRequestInterface $request, SelectQueryBuilder $qb, array $filters): ?string
     {
         if (empty($filters)) {

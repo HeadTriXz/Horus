@@ -13,8 +13,17 @@ use Horus\Models\Grade;
 use Horus\Models\User;
 use Horus\Utils;
 
+/**
+ * Controller for managing grade-related views and actions.
+ */
 class GradeController extends BaseController
 {
+    /**
+     * Display the list of grades for the authenticated student.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function index(ServerRequestInterface $request): string
     {
         $grades = Grade::createQueryBuilder()
@@ -31,6 +40,12 @@ class GradeController extends BaseController
         ]);
     }
 
+    /**
+     * Display the form for managing students and their grades for the selected exam.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return string The rendered view.
+     */
     public function manage(ServerRequestInterface $request): string
     {
         $exams = Exam::where([])
@@ -75,6 +90,12 @@ class GradeController extends BaseController
         ]);
     }
 
+    /**
+     * Update the grades for the selected exam.
+     *
+     * @param ServerRequestInterface $request The server request instance.
+     * @return ResponseInterface The response instance.
+     */
     public function update(ServerRequestInterface $request): ResponseInterface
     {
         $id = $request->getAttribute("id");
