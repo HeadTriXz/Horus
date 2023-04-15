@@ -49,7 +49,7 @@ class HomeController extends BaseController
             ->select()
             ->where("student_id = ?", Auth::id())
             ->orderBy("created_at", "DESC")
-            ->limit(3)
+            ->limit(4)
             ->getAll();
 
         $exams = Exam::createQueryBuilder()

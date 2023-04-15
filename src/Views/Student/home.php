@@ -30,7 +30,7 @@
             @endif
         </ul>
 
-        <h1 class="mt-8 mb-4 text-2xl font-bold">Links</h1>
+        <h1 class="mt-10 mb-4 text-2xl font-bold">Links</h1>
         <div class="grid grid-cols-2 gap-4">
             <a href="https://digirooster.hanze.nl/" class="flex p-4 space-x-4 bg-white rounded-xl shadow-lg shadow-slate-200">
                 <div class="flex my-auto h-14 w-14 rounded-xl bg-secondary">
